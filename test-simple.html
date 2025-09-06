@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>AWS 농장 테스트</title>
+    <style>
+        body { margin: 0; padding: 20px; background: #1a1a2e; color: white; font-family: monospace; }
+        canvas { border: 2px solid #00ffff; background: #000; image-rendering: pixelated; }
+    </style>
+</head>
+<body>
+    <h1>🌾 AWS 농장 퀘스트</h1>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <p>화살표 키로 이동, 스페이스로 상호작용</p>
+
+    <script>
+        const QUIZ_DATABASE = {
+            cp: [{
+                question: "AWS의 핵심 가치는?",
+                options: ["비용절감", "확장성", "보안", "모두"],
+                correct: 3,
+                explanation: "AWS는 모든 것을 제공합니다."
+            }]
+        };
+        
+        function getRandomQuiz(certType) {
+            return QUIZ_DATABASE[certType] ? QUIZ_DATABASE[certType][0] : null;
+        }
+
+        class Game {
+            constructor() {
+                this.canvas = document.getElementById('gameCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.ctx.imageSmoothingEnabled = false;
+                
+                this.player = { x: 400, y: 300, width: 32, height: 32, speed: 2, direction: 'down' };
+                this.keys = {};
+                
+                this.setupEvents();
+                this.gameLoop();
+            }
+            
+            setupEvents() {
+                document.addEventListener('keydown', (e) => {
+                    this.keys[e.key] = true;
+                    e.preventDefault();
+                });
+                
+                document.addEventListener('keyup', (e) => {
+                    this.keys[e.key] = false;
+                });
+            }
+            
+            update() {
+                if (this.keys['ArrowUp']) { this.player.y -= this.player.speed; this.player.direction = 'up'; }
+                if (this.keys['ArrowDown']) { this.player.y += this.player.speed; this.player.direction = 'down'; }
+                if (this.keys['ArrowLeft']) { this.player.x -= this.player.speed; this.player.direction = 'left'; }
+                if (this.keys['ArrowRight']) { this.player.x += this.player.speed; this.player.direction = 'right'; }
+                
+                if (this.keys[' ']) {
+                    alert('🌾 농장에서 AWS를 배워보세요!');
+                }
+            }
+            
+            render() {
+                // 배경
+                this.ctx.fillStyle = '#7CB342';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                // 플레이어
+                this.ctx.fillStyle = '#1976D2';
+                this.ctx.fillRect(this.player.x, this.player.y, this.player.width, this.player.width);
+                
+                // 머리
+                this.ctx.fillStyle = '#FFDBAC';
+                this.ctx.fillRect(this.player.x + 8, this.player.y + 4, 16, 16);
+                
+                // 모자
+                this.ctx.fillStyle = '#D32F2F';
+                this.ctx.fillRect(this.player.x + 6, this.player.y + 2, 20, 8);
+                
+                // UI
+                this.ctx.fillStyle = '#FFFFFF';
+                this.ctx.font = '16px monospace';
+                this.ctx.fillText('🌾 AWS 농장 퀘스트', 10, 30);
+                this.ctx.fillText('스페이스바를 눌러보세요!', 10, 60);
+            }
+            
+            gameLoop() {
+                this.update();
+                this.render();
+                requestAnimationFrame(() => this.gameLoop());
+            }
+        }
+        
+        window.addEventListener('load', () => {
+            new Game();
+        });
+    </script>
+</body>
+</html>

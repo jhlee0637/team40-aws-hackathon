@@ -1,0 +1,65 @@
+<svg width="64" height="64" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+  <!-- 플레이어 스프라이트 시트 (4프레임 x 4방향) -->
+  
+  <!-- 아래쪽 보기 (0-3프레임) -->
+  <g id="down-0">
+    <rect x="0" y="0" width="4" height="4" fill="#8B4513"/>
+    <rect x="4" y="0" width="8" height="4" fill="#FF6B6B"/>
+    <rect x="12" y="0" width="4" height="4" fill="#8B4513"/>
+    <rect x="2" y="4" width="12" height="4" fill="#FFDBAC"/>
+    <rect x="4" y="8" width="2" height="2" fill="#000"/>
+    <rect x="10" y="8" width="2" height="2" fill="#000"/>
+    <rect x="6" y="10" width="4" height="2" fill="#000"/>
+    <rect x="2" y="12" width="12" height="4" fill="#4169E1"/>
+    <rect x="4" y="16" width="2" height="4" fill="#000080"/>
+    <rect x="10" y="16" width="2" height="4" fill="#000080"/>
+  </g>
+  
+  <g id="down-1" transform="translate(16,0)">
+    <rect x="0" y="0" width="4" height="4" fill="#8B4513"/>
+    <rect x="4" y="0" width="8" height="4" fill="#FF6B6B"/>
+    <rect x="12" y="0" width="4" height="4" fill="#8B4513"/>
+    <rect x="2" y="4" width="12" height="4" fill="#FFDBAC"/>
+    <rect x="4" y="8" width="2" height="2" fill="#000"/>
+    <rect x="10" y="8" width="2" height="2" fill="#000"/>
+    <rect x="6" y="10" width="4" height="2" fill="#000"/>
+    <rect x="2" y="12" width="12" height="4" fill="#4169E1"/>
+    <rect x="2" y="16" width="2" height="4" fill="#000080"/>
+    <rect x="12" y="16" width="2" height="4" fill="#000080"/>
+  </g>
+  
+  <!-- 위쪽 보기 -->
+  <g id="up-0" transform="translate(0,16)">
+    <rect x="0" y="0" width="4" height="4" fill="#8B4513"/>
+    <rect x="4" y="0" width="8" height="4" fill="#FF6B6B"/>
+    <rect x="12" y="0" width="4" height="4" fill="#8B4513"/>
+    <rect x="2" y="4" width="12" height="4" fill="#FFDBAC"/>
+    <rect x="2" y="12" width="12" height="4" fill="#4169E1"/>
+    <rect x="4" y="16" width="2" height="4" fill="#000080"/>
+    <rect x="10" y="16" width="2" height="4" fill="#000080"/>
+  </g>
+  
+  <!-- 좌측 보기 -->
+  <g id="left-0" transform="translate(0,32)">
+    <rect x="2" y="0" width="8" height="4" fill="#FF6B6B"/>
+    <rect x="10" y="0" width="4" height="4" fill="#8B4513"/>
+    <rect x="2" y="4" width="10" height="4" fill="#FFDBAC"/>
+    <rect x="4" y="8" width="2" height="2" fill="#000"/>
+    <rect x="6" y="10" width="2" height="2" fill="#000"/>
+    <rect x="2" y="12" width="10" height="4" fill="#4169E1"/>
+    <rect x="4" y="16" width="2" height="4" fill="#000080"/>
+    <rect x="8" y="16" width="2" height="4" fill="#000080"/>
+  </g>
+  
+  <!-- 우측 보기 -->
+  <g id="right-0" transform="translate(0,48)">
+    <rect x="2" y="0" width="4" height="4" fill="#8B4513"/>
+    <rect x="6" y="0" width="8" height="4" fill="#FF6B6B"/>
+    <rect x="4" y="4" width="10" height="4" fill="#FFDBAC"/>
+    <rect x="8" y="8" width="2" height="2" fill="#000"/>
+    <rect x="8" y="10" width="2" height="2" fill="#000"/>
+    <rect x="4" y="12" width="10" height="4" fill="#4169E1"/>
+    <rect x="6" y="16" width="2" height="4" fill="#000080"/>
+    <rect x="10" y="16" width="2" height="4" fill="#000080"/>
+  </g>
+</svg>

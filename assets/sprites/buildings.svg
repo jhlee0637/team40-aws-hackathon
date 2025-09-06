@@ -1,0 +1,99 @@
+<svg width="128" height="96" viewBox="0 0 128 96" xmlns="http://www.w3.org/2000/svg">
+  <!-- 노들섬 테마 건물들 -->
+  
+  <!-- 누들누들 센터 -->
+  <g id="noodle-center">
+    <rect x="0" y="16" width="32" height="24" fill="#FF69B4"/>
+    <rect x="2" y="18" width="28" height="20" fill="#FF1493"/>
+    <rect x="4" y="20" width="24" height="16" fill="#FFB6C1"/>
+    
+    <!-- 지붕 -->
+    <rect x="-2" y="8" width="36" height="8" fill="#DC143C"/>
+    <rect x="0" y="12" width="32" height="4" fill="#B22222"/>
+    
+    <!-- 십자 마크 -->
+    <rect x="12" y="22" width="8" height="2" fill="#FFFFFF"/>
+    <rect x="15" y="20" width="2" height="6" fill="#FFFFFF"/>
+    
+    <!-- 문 -->
+    <rect x="14" y="32" width="4" height="8" fill="#8B4513"/>
+    <rect x="15" y="34" width="2" height="4" fill="#A0522D"/>
+    
+    <!-- 간판 -->
+    <rect x="6" y="6" width="20" height="4" fill="#FFFFFF"/>
+    <rect x="7" y="7" width="18" height="2" fill="#FF1493"/>
+  </g>
+  
+  <!-- 플레이어 집 -->
+  <g id="player-house" transform="translate(40,0)">
+    <rect x="0" y="20" width="24" height="20" fill="#8B4513"/>
+    <rect x="2" y="22" width="20" height="16" fill="#A0522D"/>
+    <rect x="4" y="24" width="16" height="12" fill="#DEB887"/>
+    
+    <!-- 지붕 -->
+    <rect x="-4" y="12" width="32" height="8" fill="#654321"/>
+    <rect x="-2" y="16" width="28" height="4" fill="#8B4513"/>
+    
+    <!-- 창문 -->
+    <rect x="6" y="26" width="4" height="4" fill="#87CEEB"/>
+    <rect x="14" y="26" width="4" height="4" fill="#87CEEB"/>
+    <rect x="8" y="28" width="1" height="4" fill="#000"/>
+    <rect x="16" y="28" width="1" height="4" fill="#000"/>
+    
+    <!-- 문 -->
+    <rect x="10" y="32" width="4" height="8" fill="#654321"/>
+    <rect x="11" y="34" width="2" height="4" fill="#8B4513"/>
+  </g>
+  
+  <!-- AWS 상점 -->
+  <g id="aws-shop" transform="translate(80,0)">
+    <rect x="0" y="18" width="28" height="22" fill="#4169E1"/>
+    <rect x="2" y="20" width="24" height="18" fill="#1E90FF"/>
+    <rect x="4" y="22" width="20" height="14" fill="#87CEEB"/>
+    
+    <!-- 지붕 -->
+    <rect x="-2" y="10" width="32" height="8" fill="#191970"/>
+    <rect x="0" y="14" width="28" height="4" fill="#4169E1"/>
+    
+    <!-- AWS 로고 -->
+    <rect x="8" y="24" width="12" height="4" fill="#FF9900"/>
+    <rect x="10" y="26" width="8" height="2" fill="#FFFFFF"/>
+    
+    <!-- 문 -->
+    <rect x="12" y="32" width="4" height="8" fill="#8B4513"/>
+    <rect x="13" y="34" width="2" height="4" fill="#A0522D"/>
+    
+    <!-- 간판 -->
+    <rect x="6" y="8" width="16" height="4" fill="#FF9900"/>
+    <rect x="7" y="9" width="14" height="2" fill="#FFFFFF"/>
+  </g>
+  
+  <!-- 나무 -->
+  <g id="tree" transform="translate(0,48)">
+    <rect x="6" y="12" width="4" height="8" fill="#8B4513"/>
+    <rect x="2" y="4" width="12" height="12" fill="#228B22"/>
+    <rect x="4" y="6" width="8" height="8" fill="#32CD32"/>
+    <rect x="6" y="8" width="4" height="4" fill="#90EE90"/>
+  </g>
+  
+  <!-- 풀 타일 -->
+  <g id="grass-tile" transform="translate(20,48)">
+    <rect x="0" y="0" width="16" height="16" fill="#228B22"/>
+    <rect x="2" y="2" width="2" height="6" fill="#32CD32"/>
+    <rect x="6" y="4" width="2" height="4" fill="#32CD32"/>
+    <rect x="10" y="2" width="2" height="6" fill="#32CD32"/>
+    <rect x="14" y="4" width="2" height="4" fill="#32CD32"/>
+    <rect x="4" y="8" width="2" height="4" fill="#90EE90"/>
+    <rect x="8" y="10" width="2" height="4" fill="#90EE90"/>
+    <rect x="12" y="8" width="2" height="4" fill="#90EE90"/>
+  </g>
+  
+  <!-- 길 타일 -->
+  <g id="road-tile" transform="translate(40,48)">
+    <rect x="0" y="0" width="16" height="16" fill="#DEB887"/>
+    <rect x="2" y="2" width="12" height="12" fill="#F5DEB3"/>
+    <rect x="4" y="4" width="8" height="8" fill="#FFEBCD"/>
+    <rect x="0" y="7" width="16" height="2" fill="#CD853F"/>
+    <rect x="7" y="0" width="2" height="16" fill="#CD853F"/>
+  </g>
+</svg>
