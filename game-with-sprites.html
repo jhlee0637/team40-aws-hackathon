@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS 노들섬 퀴즈 배틀 RPG - PNG 스프라이트</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            background: #000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: monospace;
+        }
+        
+        #gameCanvas {
+            border: 2px solid #FF9900;
+            background: #87CEEB;
+            image-rendering: pixelated;
+        }
+        
+        .game-info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <div class="game-info">
+        <h3>🎮 AWS 노들섬 퀴즈 배틀 RPG</h3>
+        <p>WASD: 이동 | Space: 상호작용 | 1-4: 퀴즈 답변</p>
+    </div>
+    
+    <script>
+        class SpriteLoader {
+            constructor() {
+                this.sprites = {};
+                this.loaded = false;
+            }
+            
+            async loadAllSprites() {
+                console.log('🎨 PNG 스프라이트 로딩 시작...');
+                
+                const spriteFiles = {
+                    tiles: 'assets/sprites/png/tiles.png',
+                    player: 'assets/sprites/png/player.png',
+                    monsters: 'assets/sprites/png/monsters.png'
+                };
+                
+                try {
+                    for (const [name, path] of Object.entries(spriteFiles)) {
+                        this.sprites[name] = await this.loadImage(path);
+                        console.log(`✅ ${name}.png 로딩 완료`);
+                    }
+                    
+                    this.loaded = true;
+                    console.log('🎉 모든 스프라이트 로딩 완료!');
+                    return this.sprites;
+                    
+                } catch (error) {
+                    console.warn('⚠️ PNG 스프라이트 로딩 실패, 폴백 모드 사용:', error);
+                    this.loaded = false;
+                    return null;
+                }
+            }
+            
+            loadImage(src) {
+                return new Promise((resolve, reject) => {
+                    const img = new Image();
+                    img.onload = () => resolve(img);
+                    img.onerror = reject;
+                    img.src = src;
+                });
+            }
+            
+            getTileSprite(tileId) {
+                if (!this.loaded || !this.sprites.tiles) return null;
+                
+                const tileMap = {
+                    1: { x: 0, y: 0 },
+                    2: { x: 16, y: 0 },
+                    3: { x: 32, y: 0 },
+                    7: { x: 48, y: 0 },
+                    8: { x: 64, y: 0 },
+                    11: { x: 80, y: 0 },
+                    15: { x: 96, y: 0 },
+                    16: { x: 112, y: 0 }
+                };
+                
+                return {
+                    image: this.sprites.tiles,
+                    ...tileMap[tileId],
+                    width: 16,
+                    height: 16
+                };
+            }
+            
+            getPlayerSprite(direction, frame) {
+                if (!this.loaded || !this.sprites.player) return null;
+                
+                const directionMap = {
+                    down: 0,
+                    up: 32,
+                    left: 64,
+                    right: 96
+                };
+                
+                const x = directionMap[direction] + (frame * 16);
+                
+                return {
+                    image: this.sprites.player,
+                    x: x,
+                    y: 0,
+                    width: 16,
+                    height: 16
+                };
+            }
+            
+            getMonsterSprite(type) {
+                if (!this.loaded || !this.sprites.monsters) return null;
+                
+                const monsterMap = {
+                    s3: { x: 0, y: 0 },
+                    ec2: { x: 16, y: 0 },
+                    lambda: { x: 32, y: 0 },
+                    vpc: { x: 48, y: 0 }
+                };
+                
+                return {
+                    image: this.sprites.monsters,
+                    ...monsterMap[type],
+                    width: 16,
+                    height: 16
+                };
+            }
+        }
+        
+        class Game {
+            constructor() {
+                this.canvas = document.getElementById('gameCanvas');
+                this.ctx = this.canvas.getContext('2d');
+                this.ctx.imageSmoothingEnabled = false;
+                
+                this.gameState = 'loading';
+                this.time = 0;
+                this.deltaTime = 0;
+                this.lastTime = performance.now();
+                
+                this.camera = { x: 0, y: 0, targetX: 0, targetY: 0, smoothing: 0.08 };
+                this.keys = {};
+                
+                this.tileSize = 16;
+                this.mapWidth = 80;
+                this.mapHeight = 60;
+                this.map = [];
+                this.collisionMap = [];
+                
+                this.spriteLoader = new SpriteLoader();
+                
+                this.player = {
+                    x: 400, y: 600, width: 16, height: 16, speed: 2,
+                    direction: 'down', moving: false, animFrame: 0,
+                    hp: 100, maxHp: 100, level: 1, exp: 0, expToNext: 100,
+                    awsCredits: 1000, name: '클라우드 엔지니어'
+                };
+                
+                this.battleSystem = {
+                    active: false,
+                    monster: null,
+                    currentQuestion: null,
+                    damageNumbers: []
+                };
+                
+                this.gameData = {
+                    quiz: {
+                        cp: [
+                            {
+                                question: "AWS 클라우드의 6가지 장점 중 하나가 아닌 것은?",
+                                options: ["민첩성 향상", "비용 절감", "데이터 소유권 보장", "글로벌 확장"],
+                                correct: 2,
+                                explanation: "AWS는 데이터 소유권을 보장하지 않습니다. 고객이 데이터를 소유합니다.",
+                                difficulty: 1
+                            }
+                        ]
+                    }
+                };
+                
+                this.monsters = [
+                    {
+                        x: 10, y: 20, name: "S3 버킷몬", type: "s3",
+                        hp: 60, maxHp: 60, level: 3, cert: "cp",
+                        defeated: false, moveTimer: 0
+                    }
+                ];
+                
+                this.gymLeaders = [
+                    {
+                        x: 16, y: 30, name: "박클라우드", title: "CP 관장",
+                        cert: "cp", defeated: false,
+                        dialogue: ["안녕하세요! CP 관장입니다."],
+                        certDetails: {
+                            fullName: "AWS Certified Cloud Practitioner",
+                            code: "CLF-C01",
+                            duration: "90분",
+                            questions: "65문항",
+                            passingScore: "700/1000점",
+                            cost: "$100",
+                            validity: "3년",
+                            domains: ["클라우드 개념 (26%)", "보안 (25%)"]
+                        }
+                    }
+                ];
+                
+                this.interactionCooldown = 0;
+                
+                this.init();
+            }
+            
+            async init() {
+                console.log('게임 초기화 시작...');
+                
+                // 스프라이트 로딩 시도
+                await this.spriteLoader.loadAllSprites();
+                
+                this.generateMap();
+                this.setupEventHandlers();
+                
+                this.gameState = 'overworld';
+                console.log('게임 초기화 완료!');
+                this.gameLoop();
+            }
+            
+            generateMap() {
+                this.collisionMap = [];
+                this.map = [];
+                
+                for (let y = 0; y < this.mapHeight; y++) {
+                    const mapRow = [];
+                    const collisionRow = [];
+                    
+                    for (let x = 0; x < this.mapWidth; x++) {
+                        if (x < 25) mapRow.push(1);
+                        else if (x < 50) mapRow.push(15);
+                        else mapRow.push(16);
+                        collisionRow.push(0);
+                    }
+                    
+                    this.map.push(mapRow);
+                    this.collisionMap.push(collisionRow);
+                }
+                
+                // 강 추가
+                for (let x = 0; x < this.mapWidth; x++) {
+                    const progress = x / this.mapWidth;
+                    const riverTop = 8 + Math.sin(progress * Math.PI * 1.5) * 3;
+                    for (let offset = -3; offset <= 3; offset++) {
+                        const riverY = Math.floor(riverTop + offset);
+                        if (riverY >= 0 && riverY < this.mapHeight) {
+                            this.map[riverY][x] = 2;
+                            this.collisionMap[riverY][x] = 1;
+                        }
+                    }
+                }
+                
+                // 나무 추가
+                for (let y = 15; y < 45; y++) {
+                    for (let x = 5; x < 75; x++) {
+                        if (Math.random() < 0.1) {
+                            this.map[y][x] = 3;
+                            this.collisionMap[y][x] = 1;
+                        }
+                    }
+                }
+                
+                // 건물 추가
+                const buildings = [
+                    {x: 30, y: 25, w: 6, h: 4, type: 8},
+                    {x: 16, y: 30, w: 3, h: 2, type: 11}
+                ];
+                
+                buildings.forEach(building => {
+                    for (let y = building.y; y < building.y + building.h; y++) {
+                        for (let x = building.x; x < building.x + building.w; x++) {
+                            if (x < this.mapWidth && y < this.mapHeight) {
+                                this.map[y][x] = building.type;
+                                this.collisionMap[y][x] = 1;
+                            }
+                        }
+                    }
+                });
+            }
+            
+            setupEventHandlers() {
+                document.addEventListener('keydown', (e) => {
+                    this.keys[e.key] = true;
+                    
+                    if (this.gameState === 'battle' && e.key >= '1' && e.key <= '4') {
+                        this.handleBattleAnswer(parseInt(e.key) - 1);
+                    }
+                    
+                    e.preventDefault();
+                });
+                
+                document.addEventListener('keyup', (e) => {
+                    this.keys[e.key] = false;
+                });
+            }
+            
+            update() {
+                const currentTime = performance.now();
+                this.deltaTime = currentTime - this.lastTime;
+                this.lastTime = currentTime;
+                this.time = currentTime;
+                
+                if (this.gameState === 'overworld') {
+                    this.updatePlayer();
+                    this.updateMonsters();
+                    this.updateCamera();
+                    this.checkInteractions();
+                } else if (this.gameState === 'battle') {
+                    this.updateBattle();
+                }
+            }
+            
+            updatePlayer() {
+                const oldX = this.player.x;
+                const oldY = this.player.y;
+                let moved = false;
+                
+                if (this.keys['ArrowUp'] || this.keys['w'] || this.keys['W']) {
+                    this.player.y -= this.player.speed;
+                    this.player.direction = 'up';
+                    moved = true;
+                }
+                if (this.keys['ArrowDown'] || this.keys['s'] || this.keys['S']) {
+                    this.player.y += this.player.speed;
+                    this.player.direction = 'down';
+                    moved = true;
+                }
+                if (this.keys['ArrowLeft'] || this.keys['a'] || this.keys['A']) {
+                    this.player.x -= this.player.speed;
+                    this.player.direction = 'left';
+                    moved = true;
+                }
+                if (this.keys['ArrowRight'] || this.keys['d'] || this.keys['D']) {
+                    this.player.x += this.player.speed;
+                    this.player.direction = 'right';
+                    moved = true;
+                }
+                
+                if (this.checkCollision()) {
+                    this.player.x = oldX;
+                    this.player.y = oldY;
+                    moved = false;
+                }
+                
+                this.player.moving = moved;
+                if (moved) {
+                    this.player.animFrame += this.deltaTime * 0.01;
+                }
+            }
+            
+            checkCollision() {
+                const corners = [
+                    { x: this.player.x, y: this.player.y },
+                    { x: this.player.x + this.player.width - 1, y: this.player.y },
+                    { x: this.player.x, y: this.player.y + this.player.height - 1 },
+                    { x: this.player.x + this.player.width - 1, y: this.player.y + this.player.height - 1 }
+                ];
+                
+                for (let corner of corners) {
+                    const tileX = Math.floor(corner.x / this.tileSize);
+                    const tileY = Math.floor(corner.y / this.tileSize);
+                    
+                    if (tileX < 0 || tileX >= this.mapWidth || tileY < 0 || tileY >= this.mapHeight) {
+                        return true;
+                    }
+                    
+                    if (this.collisionMap[tileY] && this.collisionMap[tileY][tileX] === 1) {
+                        return true;
+                    }
+                }
+                
+                return false;
+            }
+            
+            updateMonsters() {
+                this.monsters.forEach(monster => {
+                    if (monster.defeated) return;
+                    
+                    monster.moveTimer += this.deltaTime;
+                    if (monster.moveTimer > 3000) {
+                        const directions = [{x: 0, y: -1}, {x: 0, y: 1}, {x: -1, y: 0}, {x: 1, y: 0}];
+                        const dir = directions[Math.floor(Math.random() * 4)];
+                        
+                        const newX = monster.x + dir.x;
+                        const newY = monster.y + dir.y;
+                        
+                        if (newX >= 0 && newX < this.mapWidth && newY >= 0 && newY < this.mapHeight) {
+                            if (this.collisionMap[newY][newX] === 0) {
+                                monster.x = newX;
+                                monster.y = newY;
+                            }
+                        }
+                        monster.moveTimer = 0;
+                    }
+                });
+            }
+            
+            updateCamera() {
+                this.camera.targetX = this.player.x - this.canvas.width / 2;
+                this.camera.targetY = this.player.y - this.canvas.height / 2;
+                
+                this.camera.x += (this.camera.targetX - this.camera.x) * this.camera.smoothing;
+                this.camera.y += (this.camera.targetY - this.camera.y) * this.camera.smoothing;
+                
+                this.camera.x = Math.max(0, Math.min(this.camera.x, this.mapWidth * this.tileSize - this.canvas.width));
+                this.camera.y = Math.max(0, Math.min(this.camera.y, this.mapHeight * this.tileSize - this.canvas.height));
+            }
+            
+            checkInteractions() {
+                const playerTileX = Math.floor(this.player.x / this.tileSize);
+                const playerTileY = Math.floor(this.player.y / this.tileSize);
+                
+                // 몬스터와의 조우
+                this.monsters.forEach(monster => {
+                    if (monster.defeated) return;
+                    
+                    const distance = Math.sqrt(
+                        Math.pow(monster.x - playerTileX, 2) + 
+                        Math.pow(monster.y - playerTileY, 2)
+                    );
+                    
+                    if (distance < 1.5) {
+                        this.startBattle(monster);
+                    }
+                });
+                
+                // 체육관 관장과의 상호작용 (쿨다운 추가)
+                if ((this.keys[' '] || this.keys['Space']) && !this.interactionCooldown) {
+                    this.gymLeaders.forEach(leader => {
+                        const distance = Math.sqrt(
+                            Math.pow(leader.x - playerTileX, 2) + 
+                            Math.pow(leader.y - playerTileY, 2)
+                        );
+                        
+                        if (distance < 2) {
+                            this.startGymBattle(leader);
+                            this.interactionCooldown = 1000; // 1초 쿨다운
+                        }
+                    });
+                }
+                
+                // 쿨다운 감소
+                if (this.interactionCooldown > 0) {
+                    this.interactionCooldown -= this.deltaTime;
+                    if (this.interactionCooldown < 0) this.interactionCooldown = 0;
+                }
+            }
+            
+            startBattle(monster) {
+                this.battleSystem.active = true;
+                this.battleSystem.monster = monster;
+                this.gameState = 'battle';
+                
+                const questions = this.gameData.quiz[monster.cert] || this.gameData.quiz.cp;
+                this.battleSystem.currentQuestion = questions[Math.floor(Math.random() * questions.length)];
+                
+                console.log(`⚔️ ${monster.name}와의 퀴즈 배틀 시작!`);
+            }
+            
+            startGymBattle(leader) {
+                const dialogueText = leader.dialogue.join('\\n\\n');
+                alert(dialogueText);
+                
+                const details = leader.certDetails;
+                const detailMessage = `
+🎓 ${details.fullName} (${details.code})
+
+📋 시험 정보:
+• 시험 시간: ${details.duration}
+• 문항 수: ${details.questions}
+• 합격 점수: ${details.passingScore}
+• 시험 비용: ${details.cost}
+• 유효 기간: ${details.validity}
+
+📚 출제 영역:
+${details.domains.map(domain => `• ${domain}`).join('\\n')}
+
+배틀을 시작하시겠습니까?`;
+                
+                if (confirm(detailMessage)) {
+                    const gymMonster = {
+                        name: `${leader.name}의 AWS 챔피언`,
+                        type: 'gym',
+                        hp: 150,
+                        maxHp: 150,
+                        level: 5,
+                        cert: leader.cert,
+                        defeated: false
+                    };
+                    this.startBattle(gymMonster);
+                }
+            }
+            
+            handleBattleAnswer(selectedOption) {
+                const question = this.battleSystem.currentQuestion;
+                const correct = selectedOption === question.correct;
+                
+                if (correct) {
+                    const damage = 25 + (question.difficulty * 10);
+                    this.battleSystem.monster.hp -= damage;
+                    
+                    if (this.battleSystem.monster.hp <= 0) {
+                        this.endBattle(true);
+                    } else {
+                        this.nextBattleRound();
+                    }
+                } else {
+                    const damage = 15 + (question.difficulty * 5);
+                    this.player.hp -= damage;
+                    
+                    if (this.player.hp <= 0) {
+                        this.endBattle(false);
+                    } else {
+                        this.nextBattleRound();
+                    }
+                }
+                
+                alert(correct ? `정답! ${question.explanation}` : `오답! 정답: ${question.options[question.correct]}`);
+            }
+            
+            nextBattleRound() {
+                const questions = this.gameData.quiz[this.battleSystem.monster.cert] || this.gameData.quiz.cp;
+                this.battleSystem.currentQuestion = questions[Math.floor(Math.random() * questions.length)];
+            }
+            
+            endBattle(victory) {
+                if (victory) {
+                    const expGain = 50 + (this.battleSystem.monster.level * 10);
+                    const creditsGain = 100 + (this.battleSystem.monster.level * 25);
+                    
+                    this.player.exp += expGain;
+                    this.player.awsCredits += creditsGain;
+                    
+                    if (this.player.exp >= this.player.expToNext) {
+                        this.player.level++;
+                        this.player.exp -= this.player.expToNext;
+                        this.player.expToNext += 50;
+                        this.player.maxHp += 20;
+                        this.player.hp = this.player.maxHp;
+                    }
+                    
+                    this.battleSystem.monster.defeated = true;
+                    console.log(`🎉 승리! EXP +${expGain}, AWS Credits +${creditsGain}`);
+                } else {
+                    this.player.hp = this.player.maxHp;
+                    console.log('💔 패배... 체력을 회복하고 다시 도전하세요!');
+                }
+                
+                this.battleSystem.active = false;
+                this.gameState = 'overworld';
+            }
+            
+            updateBattle() {
+                // 배틀 업데이트 로직
+            }
+            
+            render() {
+                this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                if (this.gameState === 'loading') {
+                    this.renderLoading();
+                } else if (this.gameState === 'overworld') {
+                    this.renderOverworld();
+                } else if (this.gameState === 'battle') {
+                    this.renderBattle();
+                }
+                
+                this.renderUI();
+            }
+            
+            renderLoading() {
+                this.ctx.fillStyle = '#000';
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                this.ctx.fillStyle = '#FFFFFF';
+                this.ctx.font = '24px monospace';
+                this.ctx.fillText('스프라이트 로딩 중...', this.canvas.width / 2 - 120, this.canvas.height / 2);
+            }
+            
+            renderOverworld() {
+                // 하늘 그라데이션
+                const gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
+                gradient.addColorStop(0, '#87CEEB');
+                gradient.addColorStop(1, '#98FB98');
+                this.ctx.fillStyle = gradient;
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                this.renderMap();
+                this.renderEntities();
+            }
+            
+            renderMap() {
+                const camera = this.camera;
+                const tileSize = this.tileSize;
+                
+                const startX = Math.max(0, Math.floor(camera.x / tileSize));
+                const endX = Math.min(this.mapWidth, Math.ceil((camera.x + this.canvas.width) / tileSize));
+                const startY = Math.max(0, Math.floor(camera.y / tileSize));
+                const endY = Math.min(this.mapHeight, Math.ceil((camera.y + this.canvas.height) / tileSize));
+                
+                for (let y = startY; y < endY; y++) {
+                    for (let x = startX; x < endX; x++) {
+                        const screenX = x * tileSize - camera.x;
+                        const screenY = y * tileSize - camera.y;
+                        this.renderTile(this.map[y][x], screenX, screenY, x, y);
+                    }
+                }
+            }
+            
+            renderTile(tileType, x, y, mapX, mapY) {
+                // PNG 스프라이트 사용 시도
+                const sprite = this.spriteLoader.getTileSprite(tileType);
+                
+                if (sprite) {
+                    this.ctx.drawImage(
+                        sprite.image,
+                        sprite.x, sprite.y, sprite.width, sprite.height,
+                        x, y, this.tileSize, this.tileSize
+                    );
+                } else {
+                    // 폴백 렌더링
+                    this.renderFallbackTile(tileType, x, y, mapX, mapY);
+                }
+            }
+            
+            renderFallbackTile(tileType, x, y, mapX, mapY) {
+                const size = this.tileSize;
+                
+                switch(tileType) {
+                    case 1: // 잔디
+                        this.ctx.fillStyle = '#4A7C59';
+                        this.ctx.fillRect(x, y, size, size);
+                        break;
+                    case 2: // 물
+                        this.ctx.fillStyle = '#2E86AB';
+                        this.ctx.fillRect(x, y, size, size);
+                        break;
+                    case 3: // 나무
+                        this.ctx.fillStyle = '#4A7C59';
+                        this.ctx.fillRect(x, y, size, size);
+                        this.ctx.fillStyle = '#8B4513';
+                        this.ctx.fillRect(x + 6, y + 10, 4, 6);
+                        this.ctx.fillStyle = '#228B22';
+                        this.ctx.fillRect(x + 2, y + 2, 12, 12);
+                        break;
+                    case 8: // AWS 센터
+                        this.ctx.fillStyle = '#FF9900';
+                        this.ctx.fillRect(x, y, size, size);
+                        break;
+                    case 11: // CP 체육관
+                        this.ctx.fillStyle = '#2E7D32';
+                        this.ctx.fillRect(x, y, size, size);
+                        break;
+                    case 15: // 숲
+                        this.ctx.fillStyle = '#1B5E20';
+                        this.ctx.fillRect(x, y, size, size);
+                        break;
+                    case 16: // 산
+                        this.ctx.fillStyle = '#5D4037';
+                        this.ctx.fillRect(x, y, size, size);
+                        break;
+                    default:
+                        this.ctx.fillStyle = '#90EE90';
+                        this.ctx.fillRect(x, y, size, size);
+                        break;
+                }
+            }
+            
+            renderEntities() {
+                // 몬스터 렌더링
+                this.monsters.forEach(monster => {
+                    if (monster.defeated) return;
+                    
+                    const screenX = monster.x * this.tileSize - this.camera.x;
+                    const screenY = monster.y * this.tileSize - this.camera.y;
+                    
+                    this.renderMonster(monster, screenX, screenY);
+                });
+                
+                // 체육관 관장 렌더링
+                this.gymLeaders.forEach(leader => {
+                    if (leader.defeated) return;
+                    
+                    const screenX = leader.x * this.tileSize - this.camera.x;
+                    const screenY = leader.y * this.tileSize - this.camera.y;
+                    
+                    this.renderGymLeader(leader, screenX, screenY);
+                });
+                
+                // 플레이어 렌더링
+                const screenX = this.player.x - this.camera.x;
+                const screenY = this.player.y - this.camera.y;
+                this.renderPlayer(screenX, screenY);
+            }
+            
+            renderPlayer(x, y) {
+                // PNG 스프라이트 사용 시도
+                const frame = this.player.moving ? Math.floor(this.player.animFrame * 0.2) % 2 : 0;
+                const sprite = this.spriteLoader.getPlayerSprite(this.player.direction, frame);
+                
+                if (sprite) {
+                    this.ctx.drawImage(
+                        sprite.image,
+                        sprite.x, sprite.y, sprite.width, sprite.height,
+                        x, y, 16, 16
+                    );
+                } else {
+                    // 폴백 렌더링
+                    this.ctx.fillStyle = '#FF9900';
+                    this.ctx.fillRect(x + 4, y + 8, 8, 6);
+                    this.ctx.fillStyle = '#FFDBAC';
+                    this.ctx.fillRect(x + 5, y + 3, 6, 6);
+                    this.ctx.fillStyle = '#2C1810';
+                    this.ctx.fillRect(x + 4, y + 2, 8, 4);
+                    this.ctx.fillStyle = '#000000';
+                    this.ctx.fillRect(x + 6, y + 5, 1, 1);
+                    this.ctx.fillRect(x + 9, y + 5, 1, 1);
+                    this.ctx.fillStyle = '#1565C0';
+                    this.ctx.fillRect(x + 6, y + 12, 4, 4);
+                }
+            }
+            
+            renderMonster(monster, x, y) {
+                // PNG 스프라이트 사용 시도
+                const sprite = this.spriteLoader.getMonsterSprite(monster.type);
+                
+                if (sprite) {
+                    const bounce = Math.sin(this.time * 0.005) * 1;
+                    this.ctx.drawImage(
+                        sprite.image,
+                        sprite.x, sprite.y, sprite.width, sprite.height,
+                        x, y + bounce, 16, 16
+                    );
+                } else {
+                    // 폴백 렌더링
+                    const bounce = Math.sin(this.time * 0.005) * 1;
+                    this.ctx.fillStyle = '#FF9900';
+                    this.ctx.fillRect(x + 2, y + 4 + bounce, 12, 10);
+                    this.ctx.fillStyle = '#FFFFFF';
+                    this.ctx.fillRect(x + 4, y + 6 + bounce, 2, 2);
+                    this.ctx.fillRect(x + 10, y + 6 + bounce, 2, 2);
+                }
+                
+                this.ctx.fillStyle = '#FFFFFF';
+                this.ctx.font = '8px monospace';
+                this.ctx.fillText(monster.name.substring(0, 6), x - 5, y - 2);
+            }
+            
+            renderGymLeader(leader, x, y) {
+                const colors = { cp: '#2E7D32', saa: '#1565C0', dva: '#E65100', sap: '#4A148C' };
+                
+                this.ctx.fillStyle = colors[leader.cert] || '#424242';
+                this.ctx.fillRect(x + 4, y + 8, 8, 6);
+                
+                this.ctx.fillStyle = '#FFDBAC';
+                this.ctx.fillRect(x + 5, y + 3, 6, 6);
+                
+                this.ctx.fillStyle = '#2C1810';
+                this.ctx.fillRect(x + 4, y + 2, 8, 4);
+                
+                this.ctx.fillStyle = '#000000';
+                this.ctx.fillRect(x + 6, y + 5, 1, 1);
+                this.ctx.fillRect(x + 9, y + 5, 1, 1);
+                
+                this.ctx.fillStyle = '#1565C0';
+                this.ctx.fillRect(x + 6, y + 12, 4, 4);
+                
+                this.ctx.fillStyle = '#FFD700';
+                this.ctx.font = 'bold 8px monospace';
+                this.ctx.fillText(leader.cert.toUpperCase(), x + 2, y - 2);
+            }
+            
+            renderBattle() {
+                const gradient = this.ctx.createLinearGradient(0, 0, 0, this.canvas.height);
+                gradient.addColorStop(0, '#1A237E');
+                gradient.addColorStop(1, '#3F51B5');
+                this.ctx.fillStyle = gradient;
+                this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
+                
+                if (this.battleSystem.monster) {
+                    this.renderBattleMonster(this.canvas.width * 0.75 - 16, this.canvas.height * 0.25 - 16);
+                    this.renderMonsterHP(this.canvas.width * 0.75, this.canvas.height * 0.25 - 50);
+                }
+                
+                this.renderPlayer(this.canvas.width * 0.25 - 16, this.canvas.height * 0.65 - 16);
+                
+                if (this.battleSystem.currentQuestion) {
+                    this.renderQuizInterface();
+                }
+            }
+            
+            renderBattleMonster(x, y) {
+                this.ctx.fillStyle = '#FF9900';
+                this.ctx.fillRect(x + 2, y + 4, 12, 10);
+                this.ctx.fillStyle = '#FFFFFF';
+                this.ctx.fillRect(x + 4, y + 6, 2, 2);
+                this.ctx.fillRect(x + 10, y + 6, 2, 2);
+            }
+            
+            renderMonsterHP(x, y) {
+                const hpBarWidth = 180;
+                const hpBarHeight = 16;
+                const hpBarX = x - hpBarWidth / 2;
+                
+                this.ctx.fillStyle = '#424242';
+                this.ctx.fillRect(hpBarX - 2, y - 2, hpBarWidth + 4, hpBarHeight + 4);
+                
+                this.ctx.fillStyle = '#F44336';
+                this.ctx.fillRect(hpBarX, y, hpBarWidth, hpBarHeight);
+                
+                const hpPercent = this.battleSystem.monster.hp / this.battleSystem.monster.maxHp;
+                this.ctx.fillStyle = '#4CAF50';
+                this.ctx.fillRect(hpBarX, y, hpBarWidth * hpPercent, hpBarHeight);
+                
+                this.ctx.fillStyle = '#FFFFFF';
+                this.ctx.font = 'bold 12px monospace';
+                this.ctx.fillText(this.battleSystem.monster.name, hpBarX, y - 8);
+            }
+            
+            renderQuizInterface() {
+                const question = this.battleSystem.currentQuestion;
+                
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
+                this.ctx.fillRect(50, this.canvas.height - 220, this.canvas.width - 100, 170);
+                
+                this.ctx.fillStyle = '#FFFFFF';
+                this.ctx.font = '16px monospace';
+                this.ctx.fillText(question.question, 70, this.canvas.height - 190);
+                
+                question.options.forEach((option, index) => {
+                    const optionY = this.canvas.height - 160 + index * 35;
+                    const optionX = 70;
+                    
+                    this.ctx.fillStyle = 'rgba(255, 255, 255, 0.1)';
+                    this.ctx.fillRect(optionX - 10, optionY - 15, this.canvas.width - 140, 30);
+                    
+                    this.ctx.fillStyle = '#FFFFFF';
+                    this.ctx.font = '14px monospace';
+                    this.ctx.fillText(`${index + 1}. ${option}`, optionX, optionY);
+                });
+                
+                this.ctx.fillStyle = '#FFD700';
+                this.ctx.font = '12px monospace';
+                this.ctx.fillText('1-4 키를 눌러 답을 선택하세요', 70, this.canvas.height - 70);
+            }
+            
+            renderUI() {
+                this.ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+                this.ctx.fillRect(0, 0, this.canvas.width, 50);
+                
+                this.ctx.fillStyle = '#FFFFFF';
+                this.ctx.font = 'bold 12px monospace';
+                this.ctx.fillText(`Lv.${this.player.level}`, 10, 20);
+                
+                const hpBarWidth = 100;
+                const hpPercent = this.player.hp / this.player.maxHp;
+                this.ctx.fillStyle = '#333';
+                this.ctx.fillRect(50, 10, hpBarWidth, 12);
+                this.ctx.fillStyle = hpPercent > 0.3 ? '#4CAF50' : '#F44336';
+                this.ctx.fillRect(50, 10, hpBarWidth * hpPercent, 12);
+                this.ctx.fillStyle = '#FFF';
+                this.ctx.font = '10px monospace';
+                this.ctx.fillText(`${this.player.hp}/${this.player.maxHp}`, 55, 20);
+                
+                this.ctx.fillStyle = '#FF9900';
+                this.ctx.font = 'bold 12px monospace';
+                this.ctx.fillText(`💰 ${this.player.awsCredits}`, 200, 20);
+                
+                // 스프라이트 상태 표시
+                if (this.spriteLoader.loaded) {
+                    this.ctx.fillStyle = '#4CAF50';
+                    this.ctx.font = '10px monospace';
+                    this.ctx.fillText('PNG 스프라이트 활성화', this.canvas.width - 150, 15);
+                }
+            }
+            
+            gameLoop() {
+                this.update();
+                this.render();
+                requestAnimationFrame(() => this.gameLoop());
+            }
+        }
+        
+        // 게임 시작
+        console.log('PNG 스프라이트 게임 시작!');
+        new Game();
+    </script>
+</body>
+</html>

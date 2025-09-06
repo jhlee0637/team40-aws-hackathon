@@ -22,5 +22,45 @@
         "explanation": "EC2 기본 모니터링은 5분 간격으로 수행됩니다.",
         "difficulty": 1,
         "certInfo": "EC2는 AWS의 가상 서버 서비스로, 다양한 인스턴스 타입과 운영체제를 지원합니다."
+    },
+    {
+        "question": "AWS 공동 책임 모델에서 AWS가 책임지는 영역은?",
+        "options": ["데이터 암호화", "인프라 보안", "애플리케이션 보안", "사용자 액세스 관리"],
+        "correct": 1,
+        "explanation": "AWS는 인프라 보안(하드웨어, 네트워크, 시설)에 책임을 집니다.",
+        "difficulty": 2,
+        "certInfo": "공동 책임 모델은 AWS와 고객 간의 보안 책임을 명확히 구분합니다."
+    },
+    {
+        "question": "AWS 지원 플랜 중 가장 비용 효율적인 것은?",
+        "options": ["Basic", "Developer", "Business", "Enterprise"],
+        "correct": 0,
+        "explanation": "Basic 플랜은 무료로 제공되며, 기본적인 지원을 포함합니다.",
+        "difficulty": 1,
+        "certInfo": "AWS 지원 플랜은 비즈니스 요구사항에 따라 선택할 수 있습니다."
+    },
+    {
+        "question": "AWS 요금 계산기의 주요 기능이 아닌 것은?",
+        "options": ["비용 추정", "서비스 비교", "실시간 비용 모니터링", "아키텍처 추천"],
+        "correct": 2,
+        "explanation": "요금 계산기는 예상 비용을 계산하는 도구로, 실시간 모니터링은 제공하지 않습니다.",
+        "difficulty": 2,
+        "certInfo": "AWS 요금 계산기는 비용 최적화를 위한 필수 도구입니다."
+    },
+    {
+        "question": "AWS 클라우드의 주요 이점 중 '전 세계에서 몇 분 만에 배포'를 의미하는 것은?",
+        "options": ["비용 절감", "민첩성", "안정성", "보안"],
+        "correct": 1,
+        "explanation": "민첩성은 빠른 시간 내에 전 세계로 서비스를 확장할 수 있는 능력을 의미합니다.",
+        "difficulty": 1,
+        "certInfo": "AWS의 글로벌 인프라는 빠른 확장성을 제공합니다."
+    },
+    {
+        "question": "AWS 무료 티어에 포함되지 않는 서비스는?",
+        "options": ["EC2 t2.micro", "S3 5GB", "RDS 20GB", "Lambda 1백만 요청"],
+        "correct": 2,
+        "explanation": "RDS는 무료 티어에 포함되지 않습니다. RDS는 유료 서비스입니다.",
+        "difficulty": 2,
+        "certInfo": "AWS 무료 티어는 12개월간 다양한 서비스를 무료로 사용할 수 있습니다."
     }
 ]

@@ -486,53 +486,160 @@ export class Game {
     
     renderTile(tileType, x, y) {
         const size = this.tileSize;
+        const time = this.time * 0.001;
         
         switch(tileType) {
-            case 1: // 풀
-                this.ctx.fillStyle = '#4CAF50';
+            case 1: // 스타듀밸리 스타일 풀
+                this.renderGrassTile(x, y, size, time);
                 break;
-            case 2: // 물
-                this.ctx.fillStyle = '#2196F3';
+            case 2: // 스타듀밸리 스타일 물
+                this.renderWaterTile(x, y, size, time);
                 break;
-            case 3: // 나무
-                this.ctx.fillStyle = '#2E7D32';
+            case 3: // 스타듀밸리 스타일 나무
+                this.renderTreeTile(x, y, size);
                 break;
-            case 4: // 길
-                this.ctx.fillStyle = '#8D6E63';
+            case 4: // 스타듀밸리 스타일 길
+                this.renderPathTile(x, y, size);
                 break;
-            case 15: // 어두운 풀
-                this.ctx.fillStyle = '#2E7D32';
+            case 15: // 어두운 숲
+                this.renderDarkForestTile(x, y, size);
                 break;
             case 16: // 산
-                this.ctx.fillStyle = '#5D4037';
+                this.renderMountainTile(x, y, size);
                 break;
             case 20: // 노들라이브하우스
-                this.ctx.fillStyle = '#9C27B0';
+                this.renderBuildingTile(x, y, size, '#9C27B0', '🎵');
                 break;
             case 21: // AWS 센터
-                this.ctx.fillStyle = '#FF9900';
+                this.renderBuildingTile(x, y, size, '#FF9900', '☁️');
                 break;
             case 22: // 카페
-                this.ctx.fillStyle = '#795548';
+                this.renderBuildingTile(x, y, size, '#795548', '☕');
                 break;
             case 23: // 상점
-                this.ctx.fillStyle = '#607D8B';
+                this.renderBuildingTile(x, y, size, '#607D8B', '🏪');
                 break;
             default:
-                this.ctx.fillStyle = '#4CAF50';
+                this.renderGrassTile(x, y, size, time);
         }
-        
+    }
+    
+    renderGrassTile(x, y, size, time) {
+        // 기본 풀 색상
+        this.ctx.fillStyle = '#4CAF50';
         this.ctx.fillRect(x, y, size, size);
         
-        // 타일 디테일 추가
-        if (tileType === 2) { // 물 애니메이션
-            const wave = Math.sin(this.time * 0.003 + x * 0.1) * 2;
-            this.ctx.fillStyle = '#64B5F6';
-            this.ctx.fillRect(x, y + wave, size, 2);
-        } else if (tileType === 3) { // 나무 그림자
-            this.ctx.fillStyle = '#1B5E20';
-            this.ctx.fillRect(x + 2, y + size - 4, size - 4, 4);
+        // 풀잎 디테일 (픽셀 아트 스타일)
+        this.ctx.fillStyle = '#66BB6A';
+        const grassPattern = Math.floor((x + y) * 0.1) % 3;
+        if (grassPattern === 0) {
+            this.ctx.fillRect(x + 2, y + 2, 2, 2);
+            this.ctx.fillRect(x + size - 4, y + size - 4, 2, 2);
+        } else if (grassPattern === 1) {
+            this.ctx.fillRect(x + size/2 - 1, y + 1, 2, 3);
         }
+        
+        // 바람에 흔들리는 효과
+        const windEffect = Math.sin(time * 2 + x * 0.01) * 0.5;
+        this.ctx.fillStyle = '#81C784';
+        this.ctx.fillRect(x + windEffect, y + size - 2, 1, 2);
+    }
+    
+    renderWaterTile(x, y, size, time) {
+        // 물 기본 색상
+        this.ctx.fillStyle = '#2196F3';
+        this.ctx.fillRect(x, y, size, size);
+        
+        // 물결 애니메이션 (스타듀밸리 스타일)
+        const wave1 = Math.sin(time * 3 + x * 0.1) * 2;
+        const wave2 = Math.cos(time * 2 + y * 0.1) * 1.5;
+        
+        this.ctx.fillStyle = '#42A5F5';
+        this.ctx.fillRect(x, y + wave1, size, 2);
+        this.ctx.fillRect(x + wave2, y + size/2, 2, size/2);
+        
+        // 물 반짝임
+        if (Math.random() < 0.1) {
+            this.ctx.fillStyle = '#E3F2FD';
+            this.ctx.fillRect(x + Math.random() * size, y + Math.random() * size, 1, 1);
+        }
+    }
+    
+    renderTreeTile(x, y, size) {
+        // 나무 기둥
+        this.ctx.fillStyle = '#5D4037';
+        this.ctx.fillRect(x + size/3, y + size/2, size/3, size/2);
+        
+        // 나무 잎
+        this.ctx.fillStyle = '#2E7D32';
+        this.ctx.fillRect(x + 2, y + 2, size - 4, size/2 + 2);
+        
+        // 나무 그림자
+        this.ctx.fillStyle = '#1B5E20';
+        this.ctx.fillRect(x + size - 4, y + size - 2, 4, 2);
+        
+        // 나무 디테일
+        this.ctx.fillStyle = '#4CAF50';
+        this.ctx.fillRect(x + 4, y + 4, 2, 2);
+        this.ctx.fillRect(x + size - 6, y + 6, 2, 2);
+    }
+    
+    renderPathTile(x, y, size) {
+        // 길 기본 색상
+        this.ctx.fillStyle = '#8D6E63';
+        this.ctx.fillRect(x, y, size, size);
+        
+        // 돌멩이 디테일
+        this.ctx.fillStyle = '#A1887F';
+        const stonePattern = Math.floor((x + y) * 0.05) % 4;
+        if (stonePattern === 0) {
+            this.ctx.fillRect(x + 3, y + 3, 1, 1);
+            this.ctx.fillRect(x + size - 5, y + size - 3, 1, 1);
+        }
+        
+        // 길 테두리
+        this.ctx.fillStyle = '#6D4C41';
+        this.ctx.fillRect(x, y, size, 1);
+        this.ctx.fillRect(x, y + size - 1, size, 1);
+    }
+    
+    renderDarkForestTile(x, y, size) {
+        this.ctx.fillStyle = '#1B5E20';
+        this.ctx.fillRect(x, y, size, size);
+        
+        // 어두운 숲 디테일
+        this.ctx.fillStyle = '#0D5016';
+        this.ctx.fillRect(x + 1, y + 1, size - 2, size - 2);
+    }
+    
+    renderMountainTile(x, y, size) {
+        this.ctx.fillStyle = '#5D4037';
+        this.ctx.fillRect(x, y, size, size);
+        
+        // 산 디테일
+        this.ctx.fillStyle = '#4A2C2A';
+        this.ctx.fillRect(x + 2, y + 2, size - 4, size - 4);
+        
+        // 바위 디테일
+        this.ctx.fillStyle = '#6D4C41';
+        this.ctx.fillRect(x + 4, y + 4, 2, 2);
+    }
+    
+    renderBuildingTile(x, y, size, color, emoji) {
+        // 건물 기본 색상
+        this.ctx.fillStyle = color;
+        this.ctx.fillRect(x, y, size, size);
+        
+        // 건물 윤곽
+        this.ctx.strokeStyle = '#424242';
+        this.ctx.lineWidth = 1;
+        this.ctx.strokeRect(x, y, size, size);
+        
+        // 이모지 아이콘 (중앙에)
+        this.ctx.fillStyle = '#FFFFFF';
+        this.ctx.font = `${size/2}px Arial`;
+        this.ctx.textAlign = 'center';
+        this.ctx.fillText(emoji, x + size/2, y + size/2 + size/8);
     }
     
     renderSpecialZones() {

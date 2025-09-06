@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>🎮 AWS 노들섬 퀴즈 RPG</title>
+    <style>
+        body { margin: 0; padding: 0; background: #000; display: flex; justify-content: center; align-items: center; min-height: 100vh; font-family: monospace; }
+        #gameCanvas { border: 4px solid #FF9900; border-radius: 8px; box-shadow: 0 0 20px rgba(255, 153, 0, 0.5); }
+        .info { position: absolute; top: 10px; left: 10px; color: white; font-size: 12px; }
+    </style>
+</head>
+<body>
+    <div class="info">
+        🎮 AWS 노들섬 퀴즈 RPG<br>
+        WASD: 이동 | Space: 상호작용 | 1-4: 퀴즈 답변
+    </div>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    
+    <script>
+        // 게임 데이터
+        const quizData = {
+            cp: [
+                {
+                    question: "AWS 클라우드의 6가지 장점 중 하나가 아닌 것은?",
+                    options: ["민첩성 향상", "비용 절감", "데이터 소유권 보장", "글로벌 확장"],
+                    correct: 2,
+                    explanation: "AWS는 데이터 소유권을 보장하지 않습니다. 고객이 데이터를 소유합니다."
+                },
+                {
+                    question: "S3 버킷 이름의 특징은?",
+                    options: ["리전별로 고유", "계정별로 고유", "전 세계적으로 고유", "AZ별로 고유"],
+                    correct: 2,
+                    explanation: "S3 버킷 이름은 전 세계적으로 고유해야 합니다."
+                }
+            ],
+            saa: [
+                {
+                    question: "Multi-AZ RDS 배포의 주요 목적은?",
+                    options: ["성능 향상", "고가용성", "비용 절감", "보안 강화"],
+                    correct: 1,
+                    explanation: "Multi-AZ는 고가용성과 자동 장애 조치를 제공합니다."
+                }
+            ]
+        };
+
+        // 게임 상태
+        let gameState = 'loading';
+        let loadingProgress = 0;
+        let time = 0;
+        
+        // 플레이어
+        let player = { x: 400, y: 300, hp: 100, maxHp: 100, level: 1, exp: 0, expToNext: 100, awsCredits: 500 };
+        
+        // 몬스터
+        let testMonster = { x: 200, y: 200, name: "S3 버킷몬", cert: "cp", hp: 50, maxHp: 50, level: 1 };
+        
+        // 배틀 시스템
+        let battleSystem = { active: false, monster: null, currentQuestion: null, damageNumbers: [] };
+        
+        // 입력
+        let keys = {};
+        
+        // 캔버스 설정
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.imageSmoothingEnabled = false;
+        
+        // 키보드 입력
+        document.addEventListener('keydown', (e) => {
+            keys[e.key.toLowerCase()] = true;
+            
+            // 배틀 중 답변
+            if (battleSystem.active && battleSystem.currentQuestion) {
+                if (e.key >= '1' && e.key <= '4') {
+                    handleAnswer(parseInt(e.key) - 1);
+                }
+            }
+        });
+        
+        document.addEventListener('keyup', (e) => {
+            keys[e.key.toLowerCase()] = false;
+        });
+        
+        // 로딩 시뮬레이션
+        function updateLoading() {
+            loadingProgress += 3;
+            if (loadingProgress >= 100) {
+                gameState = 'overworld';
+            }
+        }
+        
+        // 플레이어 업데이트
+        function updatePlayer() {
+            if (keys['w']) player.y -= 2;
+            if (keys['s']) player.y += 2;
+            if (keys['a']) player.x -= 2;
+            if (keys['d']) player.x += 2;
+            
+            player.x = Math.max(16, Math.min(player.x, canvas.width - 16));
+            player.y = Math.max(16, Math.min(player.y, canvas.height - 16));
+            
+            // 몬스터와 충돌 검사
+            const dx = player.x - testMonster.x;
+            const dy = player.y - testMonster.y;
+            const distance = Math.sqrt(dx * dx + dy * dy);
+            
+            if (distance < 30 && !battleSystem.active) {
+                startBattle(testMonster);
+            }
+        }
+        
+        // 배틀 시작
+        function startBattle(monster) {
+            battleSystem.active = true;
+            battleSystem.monster = monster;
+            gameState = 'battle';
+            
+            const questions = quizData[monster.cert] || quizData.cp;
+            battleSystem.currentQuestion = questions[Math.floor(Math.random() * questions.length)];
+        }
+        
+        // 답변 처리
+        function handleAnswer(selectedOption) {
+            const question = battleSystem.currentQuestion;
+            const correct = selectedOption === question.correct;
+            
+            if (correct) {
+                const damage = 25;
+                battleSystem.monster.hp -= damage;
+                addDamageNumber(canvas.width * 0.7, canvas.height * 0.3, damage, '#4CAF50');
+                
+                if (battleSystem.monster.hp <= 0) {
+                    setTimeout(() => endBattle(true), 1000);
+                } else {
+                    setTimeout(() => nextQuestion(), 1500);
+                }
+            } else {
+                const damage = 15;
+                player.hp -= damage;
+                addDamageNumber(canvas.width * 0.3, canvas.height * 0.7, damage, '#F44336');
+                
+                if (player.hp <= 0) {
+                    setTimeout(() => endBattle(false), 1000);
+                } else {
+                    setTimeout(() => nextQuestion(), 1500);
+                }
+            }
+            
+            setTimeout(() => {
+                alert(correct ? `정답! ${question.explanation}` : `오답! 정답: ${question.options[question.correct]}`);
+            }, 500);
+        }
+        
+        function nextQuestion() {
+            const questions = quizData[battleSystem.monster.cert] || quizData.cp;
+            battleSystem.currentQuestion = questions[Math.floor(Math.random() * questions.length)];
+        }
+        
+        function endBattle(victory) {
+            if (victory) {
+                player.exp += 50;
+                player.awsCredits += 100;
+                battleSystem.monster.hp = battleSystem.monster.maxHp;
+                battleSystem.monster.x = Math.random() * (canvas.width - 32);
+                battleSystem.monster.y = Math.random() * (canvas.height - 32);
+            } else {
+                player.hp = player.maxHp;
+            }
+            
+            battleSystem.active = false;
+            gameState = 'overworld';
+        }
+        
+        function addDamageNumber(x, y, damage, color) {
+            battleSystem.damageNumbers.push({
+                x, y, damage, color,
+                life: 1000, maxLife: 1000,
+                vx: (Math.random() - 0.5) * 2,
+                vy: -3
+            });
+        }
+        
+        // 렌더링
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            if (gameState === 'loading') {
+                renderLoading();
+            } else if (gameState === 'overworld') {
+                renderOverworld();
+            } else if (gameState === 'battle') {
+                renderBattle();
+            }
+        }
+        
+        function renderLoading() {
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#0D47A1');
+            gradient.addColorStop(1, '#1565C0');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 24px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('AWS 노들섬 퀴즈 RPG', canvas.width / 2, canvas.height / 2 - 60);
+            
+            ctx.font = '14px monospace';
+            ctx.fillText('스타듀밸리 x 포켓몬 스타일', canvas.width / 2, canvas.height / 2 - 35);
+            
+            // 로딩 바
+            const barWidth = 300;
+            const barHeight = 20;
+            const barX = (canvas.width - barWidth) / 2;
+            const barY = canvas.height / 2;
+            
+            ctx.fillStyle = '#424242';
+            ctx.fillRect(barX - 2, barY - 2, barWidth + 4, barHeight + 4);
+            ctx.fillStyle = '#212121';
+            ctx.fillRect(barX, barY, barWidth, barHeight);
+            ctx.fillStyle = '#FF9900';
+            ctx.fillRect(barX, barY, (barWidth * loadingProgress) / 100, barHeight);
+            
+            ctx.fillText(`${loadingProgress}%`, canvas.width / 2, barY + 40);
+        }
+        
+        function renderOverworld() {
+            // 배경
+            const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+            gradient.addColorStop(0, '#87CEEB');
+            gradient.addColorStop(1, '#98FB98');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 간단한 맵
+            for (let x = 0; x < canvas.width; x += 32) {
+                for (let y = 0; y < canvas.height; y += 32) {
+                    ctx.fillStyle = Math.sin(x * 0.01 + y * 0.01 + time * 0.001) > 0 ? '#4CAF50' : '#2E7D32';
+                    ctx.fillRect(x, y, 32, 32);
+                }
+            }
+            
+            // 몬스터
+            ctx.fillStyle = '#FF9900';
+            ctx.fillRect(testMonster.x - 8, testMonster.y - 8, 16, 16);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = '8px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('AWS', testMonster.x, testMonster.y);
+            
+            // 플레이어
+            ctx.fillStyle = '#2196F3';
+            ctx.fillRect(player.x - 8, player.y - 8, 16, 16);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.fillText('YOU', player.x, player.y);
+            
+            // UI
+            renderUI();
+        }
+        
+        function renderBattle() {
+            // 배틀 배경
+            const gradient = ctx.createRadialGradient(canvas.width/2, canvas.height/2, 0, canvas.width/2, canvas.height/2, canvas.width);
+            gradient.addColorStop(0, '#87CEEB');
+            gradient.addColorStop(1, '#191970');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+            
+            // 몬스터
+            ctx.fillStyle = '#FF9900';
+            ctx.fillRect(canvas.width * 0.7 - 16, canvas.height * 0.25 - 16, 32, 32);
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = '12px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText(battleSystem.monster.name, canvas.width * 0.7, canvas.height * 0.25 - 25);
+            
+            // 플레이어
+            ctx.fillStyle = '#2196F3';
+            ctx.fillRect(canvas.width * 0.25 - 16, canvas.height * 0.65 - 16, 32, 32);
+            
+            // 퀴즈 UI
+            if (battleSystem.currentQuestion) {
+                renderQuizInterface();
+            }
+            
+            // 데미지 숫자
+            battleSystem.damageNumbers.forEach(dmg => {
+                const alpha = dmg.life / dmg.maxLife;
+                ctx.save();
+                ctx.globalAlpha = alpha;
+                ctx.fillStyle = dmg.color;
+                ctx.font = 'bold 20px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText(`-${dmg.damage}`, dmg.x, dmg.y);
+                ctx.restore();
+            });
+        }
+        
+        function renderQuizInterface() {
+            const question = battleSystem.currentQuestion;
+            const uiHeight = 200;
+            const uiY = canvas.height - uiHeight;
+            
+            // UI 배경
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.9)';
+            ctx.fillRect(0, uiY, canvas.width, uiHeight);
+            
+            ctx.strokeStyle = '#FFD700';
+            ctx.lineWidth = 3;
+            ctx.strokeRect(10, uiY + 10, canvas.width - 20, uiHeight - 20);
+            
+            // 질문
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 16px monospace';
+            ctx.textAlign = 'left';
+            ctx.fillText(question.question, 30, uiY + 45);
+            
+            // 선택지
+            question.options.forEach((option, index) => {
+                const optionY = uiY + 80 + index * 25;
+                
+                ctx.fillStyle = '#FFD700';
+                ctx.fillRect(25, optionY - 13, 18, 18);
+                ctx.strokeStyle = '#FFA500';
+            ctx.lineWidth = 2;
+                ctx.strokeRect(25, optionY - 13, 18, 18);
+                
+                ctx.fillStyle = '#000000';
+                ctx.font = 'bold 12px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText(`${index + 1}`, 34, optionY - 2);
+                
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = '14px monospace';
+                ctx.textAlign = 'left';
+                ctx.fillText(option, 55, optionY);
+            });
+            
+            ctx.fillStyle = '#FFD700';
+            ctx.font = 'bold 12px monospace';
+            ctx.textAlign = 'center';
+            ctx.fillText('🎮 1-4 키를 눌러 답을 선택하세요!', canvas.width / 2, canvas.height - 15);
+        }
+        
+        function renderUI() {
+            // 상단 UI
+            ctx.fillStyle = 'rgba(0, 0, 0, 0.7)';
+            ctx.fillRect(0, 0, canvas.width, 50);
+            
+            ctx.fillStyle = '#FFFFFF';
+            ctx.font = 'bold 12px monospace';
+            ctx.textAlign = 'left';
+            ctx.fillText(`Lv.${player.level}`, 10, 20);
+            
+            // HP 바
+            const hpBarWidth = 100;
+            const hpPercent = player.hp / player.maxHp;
+            ctx.fillStyle = '#333';
+            ctx.fillRect(10, 25, hpBarWidth, 12);
+            ctx.fillStyle = hpPercent > 0.3 ? '#4CAF50' : '#F44336';
+            ctx.fillRect(10, 25, hpBarWidth * hpPercent, 12);
+            
+            ctx.fillStyle = '#FF9900';
+            ctx.textAlign = 'right';
+            ctx.fillText(`💰 ${player.awsCredits} Credits`, canvas.width - 10, 20);
+        }
+        
+        // 게임 루프
+        function gameLoop() {
+            time = performance.now();
+            
+            if (gameState === 'loading') {
+                updateLoading();
+            } else if (gameState === 'overworld') {
+                updatePlayer();
+            }
+            
+            // 데미지 숫자 업데이트
+            battleSystem.damageNumbers = battleSystem.damageNumbers.filter(dmg => {
+                dmg.life -= 16;
+                dmg.x += dmg.vx;
+                dmg.y += dmg.vy;
+                return dmg.life > 0;
+            });
+            
+            render();
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // 게임 시작
+        console.log('🎮 AWS 노들섬 퀴즈 RPG 시작!');
+        gameLoop();
+    </script>
+</body>
+</html>

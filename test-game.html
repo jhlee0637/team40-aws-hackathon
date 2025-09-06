@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>AWS 노들섬 퀴즈 RPG - 테스트</title>
+    <style>
+        body { margin: 0; padding: 20px; background: #000; color: white; font-family: monospace; }
+        #gameCanvas { border: 2px solid #FF9900; background: #87CEEB; }
+        .info { margin: 10px 0; }
+    </style>
+</head>
+<body>
+    <h1>🎮 AWS 노들섬 퀴즈 RPG</h1>
+    <div class="info">WASD: 이동 | Space: 상호작용</div>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <div id="status">게임 로딩 중...</div>
+    
+    <script>
+        console.log('게임 시작!');
+        
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        const status = document.getElementById('status');
+        
+        // 간단한 게임 상태
+        let gameState = 'loading';
+        let loadingProgress = 0;
+        let player = { x: 400, y: 300, size: 16 };
+        let keys = {};
+        
+        // 키보드 입력
+        document.addEventListener('keydown', (e) => {
+            keys[e.key.toLowerCase()] = true;
+        });
+        
+        document.addEventListener('keyup', (e) => {
+            keys[e.key.toLowerCase()] = false;
+        });
+        
+        // 로딩 시뮬레이션
+        function simulateLoading() {
+            loadingProgress += 2;
+            if (loadingProgress >= 100) {
+                gameState = 'playing';
+                status.textContent = '게임 실행 중! WASD로 이동하세요.';
+            }
+        }
+        
+        // 플레이어 업데이트
+        function updatePlayer() {
+            if (keys['w'] || keys['arrowup']) player.y -= 2;
+            if (keys['s'] || keys['arrowdown']) player.y += 2;
+            if (keys['a'] || keys['arrowleft']) player.x -= 2;
+            if (keys['d'] || keys['arrowright']) player.x += 2;
+            
+            // 경계 체크
+            player.x = Math.max(0, Math.min(player.x, canvas.width - player.size));
+            player.y = Math.max(0, Math.min(player.y, canvas.height - player.size));
+        }
+        
+        // 렌더링
+        function render() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            if (gameState === 'loading') {
+                // 로딩 화면
+                ctx.fillStyle = '#1565C0';
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = '24px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText('AWS 노들섬 퀴즈 RPG', canvas.width/2, canvas.height/2 - 50);
+                
+                // 로딩 바
+                ctx.fillStyle = '#424242';
+                ctx.fillRect(canvas.width/2 - 150, canvas.height/2, 300, 20);
+                ctx.fillStyle = '#FF9900';
+                ctx.fillRect(canvas.width/2 - 150, canvas.height/2, 300 * loadingProgress/100, 20);
+                
+                ctx.font = '16px monospace';
+                ctx.fillText(`${loadingProgress}%`, canvas.width/2, canvas.height/2 + 40);
+                
+            } else if (gameState === 'playing') {
+                // 게임 화면
+                const gradient = ctx.createLinearGradient(0, 0, 0, canvas.height);
+                gradient.addColorStop(0, '#87CEEB');
+                gradient.addColorStop(1, '#98FB98');
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, canvas.width, canvas.height);
+                
+                // 간단한 맵
+                for (let x = 0; x < canvas.width; x += 32) {
+                    for (let y = 0; y < canvas.height; y += 32) {
+                        ctx.fillStyle = Math.random() > 0.8 ? '#2E7D32' : '#4CAF50';
+                        ctx.fillRect(x, y, 32, 32);
+                    }
+                }
+                
+                // 플레이어
+                ctx.fillStyle = '#FF9900';
+                ctx.fillRect(player.x, player.y, player.size, player.size);
+                ctx.fillStyle = '#FFFFFF';
+                ctx.font = '8px monospace';
+                ctx.textAlign = 'center';
+                ctx.fillText('AWS', player.x + 8, player.y + 10);
+            }
+        }
+        
+        // 게임 루프
+        function gameLoop() {
+            if (gameState === 'loading') {
+                simulateLoading();
+            } else if (gameState === 'playing') {
+                updatePlayer();
+            }
+            
+            render();
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // 게임 시작
+        console.log('게임 루프 시작');
+        gameLoop();
+    </script>
+</body>
+</html>

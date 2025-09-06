@@ -1,0 +1,775 @@
+{
+  "metadata": {
+    "title": "AWS SAA-C03 솔루션 아키텍트 어소시에이트 실습 시험 - 개선된 버전",
+    "questions": 50,
+    "time_limit": "130분",
+    "passing_score": "720/1000",
+    "created": "2025-09-06T14:32:01.000+09:00",
+    "exam_code": "SAA-C03",
+    "difficulty": "어소시에이트",
+    "version": "2.0",
+    "improvements": "명확성 향상, 요구사항 정량화, 더 이상 사용되지 않는 서비스 제거, 다중 선택 형식 개선",
+    "domains": {
+      "보안 아키텍처 설계": "30%",
+      "복원력 있는 아키텍처 설계": "26%",
+      "고성능 아키텍처 설계": "24%",
+      "비용 최적화 아키텍처 설계": "20%"
+    }
+  },
+  "questions": [
+    {
+      "question": "한 회사가 Application Load Balancer 뒤의 여러 가용 영역에 있는 Amazon EC2 인스턴스에서 웹 애플리케이션을 실행합니다. 애플리케이션은 세션 데이터를 Amazon ElastiCache for Redis에 저장합니다. 회사는 99.9% 가용성을 요구하며 하나의 가용 영역을 사용할 수 없게 되더라도 애플리케이션이 계속 사용 가능하도록 하려고 합니다. 솔루션 아키텍트는 무엇을 권장해야 합니까?",
+      "options": [
+        "자동 장애 조치를 통해 ElastiCache Redis 클러스터에 대해 Multi-AZ를 활성화",
+        "수동 장애 조치를 통해 각 가용 영역에 ElastiCache Redis 복제본 생성",
+        "세션 저장을 위해 ElastiCache 대신 Amazon DynamoDB 사용",
+        "교차 리전 복제를 통해 Amazon S3에 세션 데이터 저장"
+      ],
+      "correct": 0,
+      "explanation": "ElastiCache Redis용 Multi-AZ는 1-2분 내에 자동 장애 조치 기능을 제공하여 가용 영역 전반에 걸쳐 99.9% 가용성을 보장합니다. 자동 장애 조치는 수동 개입을 제거하고 가용성 요구사항을 충족합니다.",
+      "domain": "복원력 있는 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS ElastiCache Multi-AZ 문서",
+      "question_number": 1
+    },
+    {
+      "question": "한 회사가 매일 100GB의 애플리케이션 로그를 저장해야 합니다. 로그는 처음 30일 동안 자주 액세스되고(하루 5-10회), 다음 60일 동안 가끔 액세스되며(주 1회), 90일 후에는 거의 액세스되지 않습니다(연 1회). 로그는 규정 준수를 위해 7년 동안 보관되어야 합니다. 예상 60% 비용 절감과 함께 가장 비용 효율적인 솔루션을 제공하는 S3 스토리지 전략은 무엇입니까?",
+      "options": [
+        "S3 Standard에 저장, 30일 후 S3 Standard-IA로 전환, 90일 후 S3 Glacier로 전환",
+        "S3 Standard에 저장, 30일 후 S3 One Zone-IA로 전환, 90일 후 S3 Glacier Deep Archive로 전환",
+        "자동 비용 최적화를 위해 S3 Intelligent-Tiering에 저장",
+        "S3 Standard에 저장, 30일 후 S3 Standard-IA로 전환, 90일 후 S3 Glacier Deep Archive로 전환"
+      ],
+      "correct": 3,
+      "explanation": "이 수명 주기 정책은 빈번한 액세스(30일)에는 S3 Standard를, 가끔 액세스(30-90일)에는 S3 Standard-IA를, 드문 액세스의 장기 보관에는 S3 Glacier Deep Archive를 사용하여 비용을 최적화합니다. 이는 모든 데이터를 S3 Standard에 보관하는 것과 비교하여 약 60%의 비용 절감을 제공합니다.",
+      "domain": "비용 최적화 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS S3 스토리지 클래스 및 수명 주기 정책",
+      "question_number": 2
+    },
+    {
+      "question": "솔루션 아키텍트가 RTO 2분, RPO 30초의 고가용성 웹 애플리케이션을 설계하고 있습니다. 애플리케이션은 다른 가용 영역의 대기 인스턴스로 자동 장애 조치할 수 있는 데이터베이스가 필요합니다. 이러한 요구사항을 충족하는 데이터베이스 솔루션은 무엇입니까?",
+      "options": [
+        "동기 복제를 통한 Amazon RDS Multi-AZ 배포",
+        "최종 일관성을 통한 Amazon DynamoDB Global Tables",
+        "비동기 복제를 통한 Amazon Aurora 읽기 전용 복제본",
+        "여러 AZ의 읽기 전용 복제본과 수동 승격을 통한 Amazon RDS"
+      ],
+      "correct": 0,
+      "explanation": "Amazon RDS Multi-AZ는 동기 복제로 인해 1-2분의 RTO와 거의 0에 가까운 RPO로 다른 AZ의 대기 인스턴스에 자동 장애 조치를 제공하여 지정된 요구사항을 충족합니다.",
+      "domain": "복원력 있는 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS RDS Multi-AZ 문서",
+      "question_number": 3
+    },
+    {
+      "question": "한 회사가 온프레미스 NFS 파일 서버(500GB, 1000 IOPS)를 AWS로 마이그레이션하려고 합니다. 솔루션은 20개의 EC2 인스턴스에 동시에 마운트할 수 있고, POSIX 권한을 지원하며, 최소 100 MB/s의 처리량을 제공하는 파일 시스템을 제공해야 합니다. 어떤 AWS 서비스를 사용해야 합니까?",
+      "options": [
+        "인스턴스 간에 Multi-Attach가 활성화된 Amazon EBS",
+        "범용 모드의 Amazon EFS(Elastic File System)",
+        "S3FS FUSE 드라이버를 사용한 Amazon S3",
+        "영구 스토리지를 사용한 Amazon FSx for Lustre"
+      ],
+      "correct": 1,
+      "explanation": "Amazon EFS는 여러 EC2 인스턴스에 동시에 마운트할 수 있고, POSIX 권한을 지원하며, 공유 파일 스토리지 시나리오에 필요한 처리량 성능을 제공하는 완전 관리형 NFS 파일 시스템을 제공합니다.",
+      "domain": "고성능 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS EFS 성능 문서",
+      "question_number": 4
+    },
+    {
+      "question": "웹 애플리케이션이 5분 내에 100명에서 1000명의 동시 사용자로 급증하는 예측할 수 없는 트래픽 패턴을 경험합니다. 애플리케이션은 Application Load Balancer 뒤의 EC2 인스턴스에서 실행됩니다. 200ms 미만의 응답 시간을 유지하면서 트래픽 급증을 비용 효율적으로 처리하기 위해 솔루션 아키텍트는 무엇을 권장해야 합니까?",
+      "options": [
+        "최대 부하를 영구적으로 처리하기 위해 더 큰 EC2 인스턴스 유형(m5.2xlarge) 사용",
+        "CPU 사용률(70% 목표)을 기반으로 한 대상 추적 스케일링 정책으로 Amazon EC2 Auto Scaling 구현",
+        "비용을 줄이기 위해 최대 용량에 맞게 크기가 조정된 예약 인스턴스 사용",
+        "Route 53 장애 조치를 통해 여러 리전에 애플리케이션 배포"
+      ],
+      "correct": 1,
+      "explanation": "대상 추적 정책을 사용한 EC2 Auto Scaling은 CPU 사용률을 기반으로 인스턴스 수를 자동으로 조정하여 급증 시 스케일 아웃하고 사용량이 적을 때 스케일 인하여 성능 목표를 유지하면서 예측할 수 없는 트래픽 패턴에 대해 비용 효율적인 스케일링을 제공합니다.",
+      "domain": "고성능 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS Auto Scaling 대상 추적 문서",
+      "question_number": 5
+    },
+    {
+      "question": "한 회사가 AWS 서비스에 대한 모든 API 호출이 보안 규정 준수를 위해 로깅되고 모니터링되도록 해야 합니다. 로그는 안전하게 저장되고, 변조 방지되며, 5년 동안 보관되어야 합니다. 완전한 솔루션을 함께 제공하는 서비스 조합을 구현해야 합니까? (완전한 솔루션을 함께 제공하는 두 개를 선택하세요.)",
+      "options": [
+        "로그 파일 검증이 활성화된 포괄적인 API 로깅을 위한 AWS CloudTrail",
+        "실시간 API 모니터링 및 알림을 위한 Amazon CloudWatch",
+        "리소스 규정 준수 모니터링 및 변경 추적을 위한 AWS Config",
+        "서버 측 암호화(SSE-S3) 및 MFA 삭제 보호를 통해 S3에 CloudTrail 로그 저장",
+        "API 호출의 분산 추적을 위한 AWS X-Ray"
+      ],
+      "correct": [
+        0,
+        3
+      ],
+      "explanation": "로그 파일 검증을 통한 AWS CloudTrail은 모든 API 호출을 로깅하고 암호화 해싱을 통해 변조 방지를 보장합니다. 암호화 및 MFA 삭제 보호를 통해 S3에 로그를 저장하면 규정 준수 요구사항을 충족하는 안전한 장기 보관을 제공합니다.",
+      "domain": "보안 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS CloudTrail 보안 모범 사례",
+      "question_number": 6
+    },
+    {
+      "question": "한 회사가 1TB 데이터베이스에 대해 밀리초 미만의 지연 시간으로 일관된 10,000 IOPS 성능이 필요한 데이터 처리 애플리케이션을 실행합니다. 데이터베이스는 일관된 높은 읽기 및 쓰기 작업(읽기 70%, 쓰기 30%)을 경험합니다. 어떤 Amazon EBS 볼륨 유형을 사용해야 합니까?",
+      "options": [
+        "10,000 프로비저닝된 IOPS를 사용한 범용 SSD(gp3)",
+        "10,000 IOPS 및 Multi-Attach를 사용한 프로비저닝된 IOPS SSD(io2)",
+        "500 MB/s 처리량을 사용한 처리량 최적화 HDD(st1)",
+        "비용 효율적인 스토리지를 위한 콜드 HDD(sc1)"
+      ],
+      "correct": 1,
+      "explanation": "프로비저닝된 IOPS SSD(io2) 볼륨은 최대 64,000 IOPS의 일관된 고 IOPS 성능을 제공하며 읽기 및 쓰기 작업 모두에 대해 밀리초 미만의 지연 시간이 필요한 I/O 집약적 애플리케이션을 위해 설계되었습니다.",
+      "domain": "고성능 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS EBS io2 성능 문서",
+      "question_number": 7
+    },
+    {
+      "question": "솔루션 아키텍트가 100ms 미만의 목표 지연 시간으로 전 세계 100만 사용자에게 10GB의 정적 콘텐츠를 제공하는 글로벌 애플리케이션을 위한 솔루션을 설계해야 합니다. 콘텐츠는 us-east-1의 Amazon S3에 저장됩니다. 무엇을 구현해야 합니까?",
+      "options": [
+        "더 빠른 업로드를 위해 S3 Transfer Acceleration 활성화",
+        "글로벌 엣지 로케이션을 사용한 CDN으로 Amazon CloudFront 사용",
+        "전 세계 5개 주요 리전에 S3 버킷 복제",
+        "지능형 계층화를 통한 S3 교차 리전 복제 사용"
+      ],
+      "correct": 1,
+      "explanation": "Amazon CloudFront는 전 세계 400개 이상의 엣지 로케이션을 가진 글로벌 CDN으로 사용자 위치에 관계없이 정적 콘텐츠 전송에 대해 100ms 미만의 지연 시간을 제공하기 위해 사용자 가까이에 콘텐츠를 캐시합니다.",
+      "domain": "고성능 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS CloudFront 글로벌 엣지 네트워크",
+      "question_number": 8
+    },
+    {
+      "question": "한 회사가 매일 1000개 이상의 업로드된 이미지를 처리하기 위한 서버리스 아키텍처를 구현하려고 합니다. 솔루션은 이미지가 S3에 업로드될 때 자동으로 이미지를 3가지 크기(썸네일, 중간, 대형)로 크기를 조정해야 하며, 이미지당 처리 시간은 30초 미만이어야 합니다. 어떤 서비스 조합을 사용해야 합니까?",
+      "options": [
+        "1GB 메모리 할당을 통한 AWS Lambda 함수를 트리거하는 S3 이벤트 알림",
+        "Amazon SQS 대기열 및 EC2 Auto Scaling 그룹을 사용한 S3 이벤트 알림",
+        "컨테이너 기반 처리를 위한 AWS Batch를 사용한 Amazon EventBridge",
+        "컨테이너화된 처리를 위한 AWS Fargate를 사용한 S3 Transfer Acceleration"
+      ],
+      "correct": 0,
+      "explanation": "S3 이벤트 알림은 객체가 업로드될 때 AWS Lambda 함수를 자동으로 트리거할 수 있습니다. 1GB 메모리를 사용한 Lambda는 30초 내에 이미지 크기 조정을 위한 충분한 처리 능력을 제공하여 인프라 관리 없이 완전한 서버리스 솔루션을 제공합니다.",
+      "domain": "고성능 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS Lambda 이미지 처리 모범 사례",
+      "question_number": 9
+    },
+    {
+      "question": "한 회사가 소스 IP 주소를 기반으로 AWS 리소스에 대한 액세스를 제어해야 하며, 기업 네트워크(203.0.113.0/24 및 198.51.100.0/24)에서만 액세스를 허용하고 다른 모든 위치에서의 액세스를 거부해야 합니다. 솔루션은 모든 AWS 서비스에 중앙에서 적용되어야 합니다. 어떤 AWS 서비스를 사용해야 합니까?",
+      "options": [
+        "CloudFront 배포에서 IP 주소 일치 조건을 사용한 AWS WAF",
+        "모든 EC2 인스턴스에서 IP 기반 규칙을 사용한 보안 그룹",
+        "aws:SourceIp 조건 키를 사용한 IP 주소 조건을 가진 IAM 정책",
+        "모든 VPC 서브넷에서 IP 기반 규칙을 사용한 네트워크 ACL"
+      ],
+      "correct": 2,
+      "explanation": "'aws:SourceIp' 조건 키를 사용한 IP 주소 조건을 가진 IAM 정책은 소스 IP 주소를 기반으로 AWS 리소스에 대한 액세스를 제어할 수 있으며, 단일 정책 위치에서 모든 AWS 서비스에 걸쳐 중앙 집중식 액세스 제어를 제공합니다.",
+      "domain": "보안 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS IAM IP 주소 조건 문서",
+      "question_number": 10
+    },
+    {
+      "question": "한 회사가 99.99% 가용성(연간 8.76분 다운타임)이 필요한 미션 크리티컬 애플리케이션을 실행합니다. 애플리케이션은 현재 us-east-1a의 단일 m5.large EC2 인스턴스에서 실행됩니다. 가용성 요구사항을 충족하기 위해 솔루션 아키텍트는 무엇을 권장해야 합니까?",
+      "options": [
+        "Application Load Balancer 및 상태 확인을 통해 최소 2개의 가용 영역에 걸쳐 여러 EC2 인스턴스에 애플리케이션 배포",
+        "동일한 AZ에서 향상된 네트워킹을 사용한 더 큰 EC2 인스턴스 유형(m5.2xlarge) 사용",
+        "Amazon CloudWatch를 통한 세부 모니터링 및 자동 복구 활성화",
+        "빠른 복원을 위해 EC2 인스턴스의 일일 AMI 백업 생성"
+      ],
+      "correct": 0,
+      "explanation": "로드 밸런서를 사용한 여러 AZ에 걸친 배포는 단일 장애 지점을 제거합니다. Multi-AZ 배포는 실패한 인스턴스에서 트래픽을 자동으로 라우팅하여 99.99% 가용성을 달성할 수 있는 반면, 단일 AZ 배포는 AZ 수준 장애로 인해 이 요구사항을 충족할 수 없습니다.",
+      "domain": "복원력 있는 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS 고가용성 아키텍처 패턴",
+      "question_number": 11
+    },
+    {
+      "question": "한 회사가 Amazon S3에서 500GB의 민감한 금융 데이터를 저장 시 암호화해야 합니다. 암호화 키는 회사에서 완전히 관리되어야 하고, 매월 순환되어야 하며, AWS에 저장되지 않아야 합니다. 규정 준수에서는 AWS가 어떤 상황에서도 암호화 키에 액세스할 수 없도록 요구합니다. 어떤 암호화 옵션을 사용해야 합니까?",
+      "options": [
+        "Amazon S3 관리 키를 사용한 서버 측 암호화(SSE-S3)",
+        "AWS KMS 관리 키를 사용한 서버 측 암호화(SSE-KMS)",
+        "고객 제공 키를 사용한 서버 측 암호화(SSE-C)",
+        "AWS 암호화 SDK를 사용한 클라이언트 측 암호화"
+      ],
+      "correct": 2,
+      "explanation": "SSE-C는 고객이 자신의 암호화 키를 제공하고 관리할 수 있게 하면서 AWS가 암호화/복호화 프로세스를 처리합니다. 키는 AWS에 저장되지 않으며 각 요청과 함께 제공되어야 하므로 회사가 키 관리 및 순환을 완전히 제어할 수 있습니다.",
+      "domain": "보안 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS S3 SSE-C 문서",
+      "question_number": 12
+    },
+    {
+      "question": "웹 애플리케이션이 24시간 후 만료되는 사용자 세션 데이터를 저장해야 합니다. 애플리케이션은 10,000명의 동시 사용자를 서비스하며 99.9% 가용성과 함께 밀리초 미만의 읽기 지연 시간이 필요합니다. 세션 데이터는 사용자당 평균 2KB입니다. 가장 적합한 AWS 서비스는 무엇입니까?",
+      "options": [
+        "TTL 및 온디맨드 청구를 사용한 Amazon DynamoDB",
+        "클러스터 모드가 활성화된 Amazon ElastiCache for Redis",
+        "읽기 전용 복제본 및 연결 풀링을 사용한 Amazon RDS",
+        "자동 삭제를 위한 수명 주기 정책을 사용한 Amazon S3"
+      ],
+      "correct": 1,
+      "explanation": "ElastiCache for Redis는 세션 데이터에 대해 밀리초 미만의 지연 시간을 제공하고, 자동 만료를 지원하며, 클러스터 모드는 AZ 전반에 걸쳐 고가용성을 가능하게 합니다. 세션 저장과 같은 고성능 캐싱 시나리오를 위해 특별히 설계되었습니다.",
+      "domain": "고성능 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS ElastiCache Redis 클러스터 모드",
+      "question_number": 13
+    },
+    {
+      "question": "한 회사가 월 $5,000를 소비하고 업무 시간(월요일부터 금요일 오전 8시부터 오후 6시까지 - 주당 50시간 대 168시간)에만 사용되는 개발 및 테스트 환경의 비용을 줄이려고 합니다. 약 70%의 최대 비용 절감을 제공하는 접근 방식은 무엇입니까?",
+      "options": [
+        "1년 약정으로 모든 개발 리소스에 대해 예약 인스턴스 사용",
+        "AWS Systems Manager를 사용하여 EC2 인스턴스에 대한 자동 시작/중지 스케줄링 구현",
+        "중단 처리를 통해 모든 개발 워크로드에 스팟 인스턴스 사용",
+        "서버리스 실행을 위해 모든 개발 워크로드를 AWS Lambda로 마이그레이션"
+      ],
+      "correct": 1,
+      "explanation": "자동 시작/중지 스케줄링은 런타임을 주당 168시간에서 50시간으로 줄여(70% 감소) 개발 환경이 필요하지 않은 밤, 주말, 휴일 동안의 요금을 피함으로써 70% 비용 절감으로 직접 전환됩니다.",
+      "domain": "비용 최적화 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS Systems Manager 자동화 비용 최적화",
+      "question_number": 14
+    },
+    {
+      "question": "솔루션 아키텍트가 1000명의 동시 사용자를 지원하는 3계층 웹 애플리케이션을 위한 VPC를 설계해야 합니다. 애플리케이션은 웹 계층(2개 인스턴스)을 위한 퍼블릭 서브넷, 애플리케이션 계층(4개 인스턴스)을 위한 프라이빗 서브넷, 데이터베이스 계층(2개 인스턴스)을 위한 격리된 서브넷이 필요합니다. 2개 AZ에 걸친 고가용성을 위해 필요한 최소 서브넷 수는 얼마입니까?",
+      "options": [
+        "3개 서브넷(단일 AZ의 각 계층당 하나)",
+        "6개 서브넷(두 AZ에 걸쳐 각 계층당 두 개)",
+        "9개 서브넷(세 AZ에 걸쳐 각 계층당 세 개)",
+        "4개 서브넷(퍼블릭의 웹 및 앱 계층, 프라이빗의 데이터베이스)"
+      ],
+      "correct": 1,
+      "explanation": "2개 AZ에 걸친 고가용성을 위해서는 각 계층이 두 AZ 모두에 서브넷이 필요합니다. 이를 위해서는 총 6개의 서브넷이 필요합니다: 2개 퍼블릭(웹 계층), 2개 프라이빗(앱 계층), 2개 격리/프라이빗(데이터베이스 계층)으로 단일 AZ 장애가 전체 애플리케이션에 영향을 주지 않도록 합니다.",
+      "domain": "복원력 있는 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS VPC Multi-AZ 아키텍처 모범 사례",
+      "question_number": 15
+    },
+    {
+      "question": "한 회사가 S3에 업로드된 100GB 비디오 파일을 처리합니다. 처리는 파일당 4-6시간이 걸리며 최대 2시간 지속되는 일시적인 장애가 있어도 계속되어야 합니다. 솔루션은 자동 재시도 기능으로 하루에 50개 파일을 처리해야 합니다. 가장 복원력 있는 솔루션을 제공하는 서비스 조합은 무엇입니까?",
+      "options": [
+        "AWS Lambda(15분 타임아웃)를 사용한 S3 이벤트 알림",
+        "Amazon SQS Standard 대기열 및 EC2 인스턴스를 사용한 S3 이벤트 알림",
+        "재시도 정책을 사용한 Amazon SQS 대기열 및 AWS Batch를 사용한 S3 이벤트 알림",
+        "오류 처리를 사용한 AWS Step Functions를 사용한 Amazon EventBridge"
+      ],
+      "correct": 2,
+      "explanation": "SQS는 최대 12시간까지 일시적인 장애를 처리하기 위한 메시지 내구성과 가시성 타임아웃을 제공합니다. AWS Batch는 내장된 재시도 정책을 사용한 장기 실행 배치 처리 작업(최대 24시간)을 위해 설계되어 이 조합이 복원력 있는 비디오 파일 처리에 이상적입니다.",
+      "domain": "복원력 있는 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS Batch 장기 실행 작업 문서",
+      "question_number": 16
+    },
+    {
+      "question": "500명의 원격 직원을 둔 회사가 AWS 리소스에 대한 보안 액세스를 제공해야 합니다. 솔루션은 기존 Active Directory와 통합되어야 하고, 임시 자격 증명(4시간 세션)을 제공해야 하며, MFA를 지원해야 합니다. 어떤 접근 방식을 구현해야 합니까?",
+      "options": [
+        "장기 액세스 키를 사용하여 각 직원에 대한 개별 IAM 사용자 생성",
+        "Active Directory에 대한 SAML 페더레이션을 사용한 AWS IAM Identity Center(AWS SSO의 후속) 사용",
+        "VPN 연결을 설정하고 EC2 인스턴스 프로필과 함께 IAM 역할 사용",
+        "Active Directory 동기화를 사용한 Amazon Cognito User Pools 사용"
+      ],
+      "correct": 1,
+      "explanation": "AWS IAM Identity Center는 Active Directory와의 SAML 페더레이션, 역할 가정을 통한 임시 자격 증명, MFA 지원, AWS 리소스에 대한 중앙 집중식 액세스 관리를 제공하여 엔터프라이즈 페더레이션 액세스를 위한 보안 모범 사례를 따릅니다.",
+      "domain": "보안 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS IAM Identity Center 페더레이션 문서",
+      "question_number": 17
+    },
+    {
+      "question": "애플리케이션이 CPU 사용률(목표 70%)을 기반으로 2개에서 15개의 읽기 전용 복제본으로 읽기 용량을 자동으로 스케일링할 수 있으면서 쓰기에 대해서는 강한 일관성을 유지하는 데이터베이스가 필요합니다. 데이터베이스는 초당 1000개의 쓰기와 피크 시간 동안 최대 초당 10,000개의 읽기를 처리합니다. 어떤 데이터베이스 솔루션을 사용해야 합니까?",
+      "options": [
+        "자동 스케일링 및 최종 일관성을 사용한 Amazon DynamoDB",
+        "읽기 전용 복제본에 대한 Aurora Auto Scaling을 사용한 Amazon Aurora",
+        "수동 읽기 전용 복제본 관리를 사용한 Amazon RDS PostgreSQL",
+        "읽기 기본 설정 구성을 사용한 Amazon DocumentDB"
+      ],
+      "correct": 1,
+      "explanation": "Aurora Auto Scaling을 사용한 Amazon Aurora는 CPU 사용률을 기반으로 읽기 전용 복제본을 자동으로 추가/제거할 수 있으며(최대 15개) 기본 인스턴스에 대한 쓰기의 강한 일관성을 유지합니다. 이는 자동 확장성과 일관성 보장을 모두 제공합니다.",
+      "domain": "고성능 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS Aurora Auto Scaling 문서",
+      "question_number": 18
+    },
+    {
+      "question": "한 회사가 SQS 대기열 길이와 같은 사용자 정의 메트릭을 기반으로 애플리케이션 성능을 모니터링하고 자동으로 스케일링하려고 합니다(목표: 인스턴스당 10개 메시지). 애플리케이션은 가변 처리 시간으로 시간당 1000-5000개의 메시지를 처리합니다. 어떤 서비스 조합을 사용해야 합니까?",
+      "options": [
+        "사용자 정의 메트릭을 사용한 Amazon CloudWatch 및 대상 추적 정책을 사용한 EC2 Auto Scaling",
+        "Application Load Balancer 상태 확인 및 스케일링을 사용한 AWS X-Ray",
+        "메트릭 처리를 위한 AWS Lambda를 사용한 Amazon CloudWatch Logs",
+        "임계값 알림을 위한 Amazon SNS를 사용한 AWS Config"
+      ],
+      "correct": 0,
+      "explanation": "CloudWatch 사용자 정의 메트릭은 SQS 대기열 길이를 추적할 수 있고, EC2 Auto Scaling 대상 추적 정책은 인스턴스당 10개 메시지를 유지하기 위해 인스턴스를 자동으로 스케일링하여 실제 워크로드 수요를 기반으로 반응형 스케일링을 제공할 수 있습니다.",
+      "domain": "고성능 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS Auto Scaling 사용자 정의 메트릭 문서",
+      "question_number": 19
+    },
+    {
+      "question": "솔루션 아키텍트가 Amazon EBS 볼륨에 저장된 10TB의 중요한 데이터에 대한 백업 전략을 설계해야 합니다. 백업은 매일 자동화되어야 하고, 여러 리전에 저장되어야 하며, 1년 동안 보관되어야 하고, 24시간의 RPO로 특정 시점 복구를 제공해야 합니다. 무엇을 구현해야 합니까?",
+      "options": [
+        "수명 주기 정책 및 수동 교차 리전 복사를 사용한 EBS 스냅샷",
+        "교차 리전 백업 규칙 및 1년 보관 정책을 사용한 AWS Backup",
+        "S3 스토리지 및 Glacier 아카이빙을 사용한 타사 백업 소프트웨어",
+        "AWS DataSync를 사용한 다른 리전으로의 EBS 볼륨 복제"
+      ],
+      "correct": 1,
+      "explanation": "AWS Backup은 자동화된 일일 스케줄링, 교차 리전 백업 기능, 최대 100년까지의 유연한 보관 정책, 특정 시점 복구를 통한 중앙 집중식 백업 관리를 제공하여 포괄적인 엔터프라이즈 백업 전략에 이상적입니다.",
+      "domain": "복원력 있는 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS Backup 교차 리전 문서",
+      "question_number": 20
+    },
+    {
+      "question": "한 회사가 휴일 동안 계절적 트래픽 급증을 경험하는 전자상거래 애플리케이션을 실행합니다. 일반 트래픽은 1000명의 사용자이지만, 성수기 동안 트래픽이 4000명의 사용자로 증가합니다(300% 증가). 현재 월 비용은 $2000입니다. 예상 40% 비용 절감과 함께 최고의 비용-성능 균형을 제공하는 스케일링 전략은 무엇입니까?",
+      "options": [
+        "최대 용량(4000명 사용자)에 맞게 크기가 조정된 예약 인스턴스 사용",
+        "기준선(1000명 사용자)에 25% 예약 인스턴스 및 피크 수요 스케일링에 75% 스팟 인스턴스 사용",
+        "적극적인 스케일링 정책 및 중단 처리를 통해 스팟 인스턴스만 사용",
+        "과거 패턴을 기반으로 한 예측 스케일링을 통한 온디맨드 인스턴스 사용"
+      ],
+      "correct": 1,
+      "explanation": "예측 가능한 기준선 용량에 25% 예약 인스턴스와 가변 피크 수요에 75% 스팟 인스턴스(최대 90% 절약)를 결합하면 계절적 트래픽 급증 동안 성능을 유지하면서 약 40%의 최적 비용 절감을 제공합니다.",
+      "domain": "비용 최적화 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS EC2 혼합 인스턴스 유형 모범 사례",
+      "question_number": 21
+    },
+    {
+      "question": "한 회사가 애플리케이션과 Amazon RDS PostgreSQL 데이터베이스 간의 전송 중인 민감한 고객 데이터가 암호화되도록 해야 합니다. 데이터베이스에는 최소 TLS 1.2 암호화가 필요한 PII 데이터가 포함되어 있습니다. 어떤 접근 방식을 구현해야 합니까?",
+      "options": [
+        "AWS KMS를 사용하여 RDS 인스턴스에 대한 저장 시 암호화 활성화",
+        "force_ssl 매개변수가 활성화된 RDS 인스턴스에 대한 SSL/TLS 연결 구성",
+        "AES-256을 사용하여 RDS로 보내기 전에 애플리케이션 수준에서 데이터 암호화",
+        "네트워크 수준에서 데이터베이스 연결을 암호화하기 위해 AWS KMS 사용"
+      ],
+      "correct": 1,
+      "explanation": "force_ssl 매개변수를 사용한 SSL/TLS 연결 구성은 애플리케이션과 RDS 데이터베이스 간의 모든 전송 중 데이터가 TLS 1.2+를 사용하여 암호화되도록 보장하여 네트워크를 통한 전송 중 민감한 PII 데이터를 보호합니다.",
+      "domain": "보안 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS RDS SSL/TLS 구성 문서",
+      "question_number": 22
+    },
+    {
+      "question": "애플리케이션이 처리 시간이 메시지당 30초에서 10분까지 다양한 SQS 대기열의 메시지를 처리합니다. 애플리케이션은 시간당 1000개의 메시지를 처리합니다. 처리 중 메시지가 손실되지 않고 중복 처리를 피하기 위해 어떤 구성을 설정해야 합니까?",
+      "options": [
+        "가시성 타임아웃을 15분으로 설정(최대 처리 시간보다 길게)",
+        "메시지 중복 제거가 활성화된 SQS FIFO 대기열 사용",
+        "maxReceiveCount가 3인 SQS 데드 레터 대기열 활성화",
+        "내구성을 위해 메시지 보관 기간을 14일로 설정"
+      ],
+      "correct": 0,
+      "explanation": "가시성 타임아웃을 15분으로 설정(최대 처리 시간 10분보다 길게)하면 처리 중에 메시지가 다른 소비자에게 보이지 않게 되고 손실되거나 여러 번 처리되지 않아 중복 처리를 방지합니다.",
+      "domain": "복원력 있는 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS SQS 가시성 타임아웃 모범 사례",
+      "question_number": 23
+    },
+    {
+      "question": "솔루션 아키텍트가 10초마다 1KB 메시지를 보내는 10,000개의 IoT 장치에서 스트리밍 데이터에 대한 실시간 분석을 위한 솔루션을 설계해야 합니다. 솔루션은 서버리스여야 하고, 실시간으로 데이터를 처리해야 하며, 쿼리를 위한 결과를 저장해야 합니다. 어떤 서비스 조합을 사용해야 합니까?",
+      "options": [
+        "AWS Lambda 및 Amazon DynamoDB를 사용한 Amazon Kinesis Data Streams(1MB/초 처리량)",
+        "배치 분석을 위한 Amazon S3 및 Amazon Athena를 사용한 Amazon Kinesis Data Firehose",
+        "데이터 처리를 위한 EC2 인스턴스 및 Amazon RDS를 사용한 Amazon MSK",
+        "데이터 웨어하우징을 위한 AWS Batch 및 Amazon Redshift를 사용한 Amazon SQS"
+      ],
+      "correct": 0,
+      "explanation": "Kinesis Data Streams는 실시간 IoT 데이터를 수집할 수 있고(1MB/초 용량), Lambda는 서버리스 실시간 처리를 제공하며, DynamoDB는 밀리초 미만의 쿼리 성능으로 실시간 분석 결과를 위한 빠르고 확장 가능한 스토리지를 제공합니다.",
+      "domain": "고성능 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS Kinesis 실시간 분석 아키텍처",
+      "question_number": 24
+    },
+    {
+      "question": "한 회사가 최소 다운타임(목표: 4시간 미만)으로 온프레미스 Oracle 데이터베이스(2TB, 1000개 동시 연결)를 AWS로 마이그레이션하려고 합니다. 데이터베이스는 4시간 이상 오프라인 상태가 될 수 없는 중요한 애플리케이션을 지원합니다. 어떤 마이그레이션 접근 방식을 사용해야 합니까?",
+      "options": [
+        "지속적인 복제 및 유지 관리 창 중 컷오버를 통한 AWS Database Migration Service(DMS) 사용",
+        "RDS Oracle 인스턴스를 생성하고 전체 데이터베이스 백업에서 복원(8시간 프로세스)",
+        "예약된 다운타임 중에 데이터베이스 파일을 복사하기 위해 AWS DataSync 사용",
+        "S3로 데이터를 내보내고 Amazon Aurora로 가져오기(12시간 프로세스)"
+      ],
+      "correct": 0,
+      "explanation": "지속적인 복제를 통한 AWS DMS는 마이그레이션 중에 소스 데이터베이스에서 변경 사항을 지속적으로 복제한 다음 유지 관리 창 중에 빠른 컷오버(일반적으로 15-30분)를 수행하여 최소 다운타임 마이그레이션을 허용합니다.",
+      "domain": "복원력 있는 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS DMS 최소 다운타임 마이그레이션",
+      "question_number": 25
+    },
+    {
+      "question": "웹 애플리케이션이 매일 100,000명의 사용자가 전 세계적으로 액세스하는 50GB의 정적 자산(이미지, CSS, JS)을 제공합니다. 자산은 매주 업데이트되며 전 세계적으로 100ms 미만의 지연 시간으로 전달되어야 합니다. 현재 S3 호스팅 비용은 월 $200입니다. 최고의 성능과 비용 최적화를 제공하는 솔루션은 무엇입니까?",
+      "options": [
+        "CloudFront 배포를 통해 S3 Standard에 자산 저장(예상 30% 비용 절감)",
+        "CloudFront 배포를 통해 S3 Standard-IA에 자산 저장",
+        "자산을 직접 제공하기 위해 5개 주요 리전의 EC2 인스턴스 사용",
+        "Transfer Acceleration을 통해 S3 One Zone-IA에 자산 저장"
+      ],
+      "correct": 0,
+      "explanation": "S3 Standard는 매주 업데이트되는 자산에 적합하며, CloudFront는 전 세계적으로 100ms 미만의 지연 시간을 위한 글로벌 엣지 캐싱을 제공합니다. CloudFront는 엣지 캐싱을 통해 성능을 향상시키면서 S3 데이터 전송 비용을 약 30% 절감합니다.",
+      "domain": "고성능 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS CloudFront 비용 최적화 가이드",
+      "question_number": 26
+    },
+    {
+      "question": "한 회사가 VPC의 다중 계층 애플리케이션에 대한 네트워크 세분화를 구현해야 합니다. 데이터베이스 서버(포트 5432)는 애플리케이션 서버(특정 보안 그룹)에서만 연결을 수락해야 하고, 애플리케이션 서버는 웹 서버(포트 8080)에서만 연결을 수락해야 합니다. 가장 안전한 솔루션을 제공하는 접근 방식은 무엇입니까?",
+      "options": [
+        "포트 기반 규칙을 사용하여 서브넷 간 트래픽을 제어하기 위해 네트워크 ACL 사용",
+        "특정 포트 및 소스 보안 그룹 참조를 사용한 보안 그룹 사용",
+        "데이터베이스 및 애플리케이션 보호를 위한 AWS WAF 규칙 구현",
+        "무단 연결을 모니터링하고 차단하기 위해 VPC Flow Logs 사용"
+      ],
+      "correct": 1,
+      "explanation": "보안 그룹은 인스턴스 수준에서 가상 방화벽 역할을 하며 다른 보안 그룹을 소스로 참조할 수 있어 상태 저장 연결 추적을 통해 특정 포트(5432)에서 어떤 애플리케이션 서버가 데이터베이스 서버에 액세스할 수 있는지 정확하게 제어할 수 있습니다.",
+      "domain": "보안 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS VPC 보안 그룹 모범 사례",
+      "question_number": 27
+    },
+    {
+      "question": "애플리케이션이 OLTP 워크로드(초당 1000개 트랜잭션)와 OLAP 워크로드(30-60초 소요되는 복잡한 분석 쿼리) 모두를 처리할 수 있고 최대 128TB 스토리지까지 자동 스케일링되는 데이터베이스가 필요합니다. 데이터베이스는 SQL 쿼리를 지원하고 OLTP에 대해 일관된 10ms 미만의 응답 시간을 제공해야 합니다. 어떤 AWS 서비스를 사용해야 합니까?",
+      "options": [
+        "OLAP 워크로드를 위한 최대 15개의 읽기 전용 복제본을 사용한 Amazon Aurora",
+        "혼합 워크로드를 위한 Redshift Spectrum을 사용한 Amazon Redshift",
+        "분석을 위한 Global Secondary Index를 사용한 Amazon DynamoDB",
+        "Multi-AZ 배포를 사용한 Amazon RDS PostgreSQL"
+      ],
+      "correct": 0,
+      "explanation": "Amazon Aurora는 OLTP(10ms 미만 지연 시간의 기본 인스턴스)와 OLAP(분석 쿼리를 위한 읽기 전용 복제본) 워크로드를 모두 처리할 수 있고, SQL을 지원하며, 최대 128TB까지 자동 스케일링을 제공하고, 분산 아키텍처로 일관된 성능을 유지합니다.",
+      "domain": "고성능 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS Aurora 혼합 워크로드 아키텍처",
+      "question_number": 28
+    },
+    {
+      "question": "한 회사가 동일한 리전(us-east-1)의 EC2 인스턴스에서 S3의 1TB 객체에 매일 자주 액세스하는 애플리케이션의 데이터 전송 비용을 줄이려고 합니다. 현재 월 데이터 전송 비용은 $500입니다. 약 80% 비용 절감을 달성하기 위해 구현해야 하는 접근 방식은 무엇입니까?",
+      "options": [
+        "더 빠른 데이터 액세스를 위해 S3 Transfer Acceleration 사용",
+        "지연 시간을 줄이기 위해 S3 교차 리전 복제 활성화",
+        "인터넷 게이트웨이 요금을 제거하기 위해 S3용 VPC 엔드포인트 사용",
+        "지역 엣지 캐시를 통해 S3 액세스를 위한 CloudFront 구현"
+      ],
+      "correct": 2,
+      "explanation": "S3용 VPC 엔드포인트는 EC2 인스턴스가 인터넷 게이트웨이 요금 없이 AWS 내부 네트워크를 통해 S3에 액세스할 수 있게 하여 보안과 성능을 향상시키면서 데이터 전송 비용을 제거합니다(약 80% 절감).",
+      "domain": "비용 최적화 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS VPC 엔드포인트 비용 절감 문서",
+      "question_number": 29
+    },
+    {
+      "question": "솔루션 아키텍트가 RTO 4시간, RPO 1시간, 현재 인프라 비용 월 $10,000인 중요한 애플리케이션을 위한 재해 복구 솔루션을 설계해야 합니다. 기본 사이트는 us-east-1에 있습니다. 비용을 최적화하면서 요구사항을 충족하기 위해 구현해야 하는 DR 전략은 무엇입니까?",
+      "options": [
+        "자동화된 복구 스크립트를 사용한 백업 및 복원(최저 비용, 6-8시간 RTO)",
+        "사전 구성된 AMI 및 자동화된 스케일링을 사용한 파일럿 라이트(중간 비용, 2-4시간 RTO)",
+        "us-west-2 DR 리전에서 25% 용량을 사용한 웜 스탠바이(높은 비용, 1-2시간 RTO)",
+        "두 리전에 걸친 다중 사이트 액티브/액티브 배포(최고 비용, 거의 0에 가까운 RTO)"
+      ],
+      "correct": 1,
+      "explanation": "파일럿 라이트 전략은 사전 구성된 AMI와 자동화된 스케일링으로 4시간 RTO 요구사항을 충족할 수 있으며, 정기적인 백업과 복제로 1시간 RPO를 달성할 수 있습니다. 이는 지정된 요구사항에 대해 최적의 비용-성능 균형을 제공합니다.",
+      "domain": "복원력 있는 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS 재해 복구 전략 비교",
+      "question_number": 30
+    },
+    {
+      "question": "한 회사가 Amazon EKS에서 마이크로서비스를 실행하고 세밀한 액세스 제어를 통한 서비스 간 인증을 구현해야 합니다. 각 서비스는 AWS 리소스(S3, DynamoDB, SQS)에 대한 다른 권한이 필요합니다. 솔루션은 기존 IAM 역할과 통합되어야 하고 컨테이너에 자격 증명을 포함하지 않아야 합니다. 어떤 접근 방식을 사용해야 합니까?",
+      "options": [
+        "서비스 계정 및 클러스터 역할을 사용한 Kubernetes RBAC 사용",
+        "포드 수준 IAM 역할을 사용한 서비스 계정용 AWS IAM 역할(IRSA) 구현",
+        "각 서비스의 자격 증명을 저장하기 위해 AWS Secrets Manager 사용",
+        "서비스 간 통신을 위한 사용자 정의 JWT 토큰 구현"
+      ],
+      "correct": 1,
+      "explanation": "서비스 계정용 IAM 역할(IRSA)은 EKS 포드가 자격 증명을 포함하지 않고 특정 IAM 역할을 가정할 수 있게 하여 기존 IAM 정책과의 통합 및 마이크로서비스별 다양한 AWS 서비스에 대한 세밀한 액세스 제어를 제공합니다.",
+      "domain": "보안 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS EKS IRSA 보안 모범 사례",
+      "question_number": 31
+    },
+    {
+      "question": "애플리케이션이 대용량 데이터셋(500GB 파일)을 처리하고 높은 순차 읽기 성능(최소 500 MB/s 처리량)이 필요합니다. 데이터는 분석을 위해 자주 액세스되지만 높은 랜덤 IOPS는 필요하지 않습니다(100 IOPS 미만 필요). 최고의 비용-성능 비율을 제공하는 EBS 볼륨 유형은 무엇입니까?",
+      "options": [
+        "3000 IOPS 기준선을 사용한 범용 SSD(gp3)",
+        "1000 IOPS를 사용한 프로비저닝된 IOPS SSD(io2)",
+        "500 MB/s 처리량을 사용한 처리량 최적화 HDD(st1)",
+        "비용 효율적인 스토리지를 위한 콜드 HDD(sc1)"
+      ],
+      "correct": 2,
+      "explanation": "처리량 최적화 HDD(st1)는 대용량 순차 I/O를 사용한 자주 액세스되는 처리량 집약적 워크로드를 위해 특별히 설계되어 이 사용 사례에 대해 SSD 옵션 비용의 일부로 500 MB/s 처리량을 제공합니다.",
+      "domain": "비용 최적화 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS EBS st1 성능 최적화",
+      "question_number": 32
+    },
+    {
+      "question": "한 회사가 5분 내에 AWS 환경에서 감지된 보안 위협에 자동으로 대응하는 솔루션을 구현해야 합니다. 솔루션은 손상된 EC2 인스턴스를 격리하고, IAM 자격 증명을 취소하며, 이메일과 Slack을 통해 보안 팀에 알려야 합니다. 어떤 서비스 조합을 사용해야 합니까?",
+      "options": [
+        "자동화된 수정을 위한 Amazon EventBridge 규칙 및 AWS Lambda를 사용한 AWS GuardDuty",
+        "알림을 위한 AWS Systems Manager 및 Amazon SNS를 사용한 AWS Config",
+        "AWS Step Functions를 사용한 Amazon CloudWatch 알람을 사용한 AWS CloudTrail",
+        "이메일 알림을 위한 AWS WAF 및 Amazon SES를 사용한 AWS Security Hub"
+      ],
+      "correct": 0,
+      "explanation": "GuardDuty는 실시간으로 위협을 감지하고, EventBridge는 규칙 기반 필터링으로 결과를 라우팅하며, Lambda는 자동화된 수정 작업(인스턴스 격리, 자격 증명 취소)을 실행하고 몇 분 내에 여러 채널로 알림을 보낼 수 있습니다.",
+      "domain": "보안 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS GuardDuty 자동화된 응답 아키텍처",
+      "question_number": 33
+    },
+    {
+      "question": "한 회사가 3가지 형식(썸네일, 중간, 대형)으로 크기가 조정되는 사용자 업로드 이미지를 저장합니다. 원본 이미지(평균 10MB)는 30일 동안 자주 액세스된 후 거의 액세스되지 않습니다. 크기 조정된 이미지(평균 2MB)는 수명 주기 전반에 걸쳐 자주 액세스됩니다. 현재 100TB 총 스토리지 비용은 월 $1000입니다. 가장 비용 효율적인 스토리지 전략은 무엇입니까?",
+      "options": [
+        "30일 후 IA로 수명 주기 정책을 사용하여 모든 이미지를 S3 Standard에 저장",
+        "30일 후 원본을 S3 Standard에서 Standard-IA로 수명 주기 전환하고, 크기 조정된 이미지는 S3 Standard에 유지",
+        "자동 최적화를 위해 모든 이미지에 S3 Intelligent-Tiering 사용",
+        "50% 비용 절감을 위해 모든 이미지를 S3 One Zone-IA에 저장"
+      ],
+      "correct": 1,
+      "explanation": "이 전략은 30일 후 원본 이미지를 Standard-IA로 이동하여(스토리지의 75%에 대해 40% 비용 절감) 최적 성능을 위해 자주 액세스되는 크기 조정된 이미지를 Standard 스토리지에 유지하면서 비용을 최적화하여 약 30%의 전체 비용 절감을 제공합니다.",
+      "domain": "비용 최적화 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS S3 스토리지 클래스 비용 분석",
+      "question_number": 34
+    },
+    {
+      "question": "한 회사가 Amazon ECS에서 실행되는 컨테이너화된 애플리케이션에 대해 무중단 및 문제가 감지되면 2분 내에 롤백할 수 있는 블루-그린 배포를 구현하려고 합니다. 애플리케이션은 분당 10,000개의 요청을 처리합니다. 어떤 접근 방식을 사용해야 합니까?",
+      "options": [
+        "상태 확인 및 50% 교체 전략을 사용한 ECS 롤링 업데이트 사용",
+        "ECS 블루-그린 배포 및 자동화된 롤백을 사용한 AWS CodeDeploy 구현",
+        "수동 DNS 업데이트를 통한 Application Load Balancer 대상 그룹 전환 사용",
+        "별도의 ECS 클러스터에 배포하고 Route 53 가중 라우팅 정책 전환"
+      ],
+      "correct": 1,
+      "explanation": "AWS CodeDeploy는 무중단, 자동 상태 확인, 배포 문제가 감지되면 2분 내에 자동화된 롤백 기능을 통해 ECS에 대한 네이티브 블루-그린 배포 지원을 제공하여 전체 배포 수명 주기를 관리합니다.",
+      "domain": "복원력 있는 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS CodeDeploy ECS 블루-그린 문서",
+      "question_number": 35
+    },
+    {
+      "question": "애플리케이션이 복잡한 데이터 구조(목록, 집합, 정렬된 집합)를 처리하고, 실시간 알림을 위한 pub/sub 메시징을 지원하며, 재시작 시 데이터를 유지할 수 있는 캐싱 계층이 필요합니다. 캐시는 자동 장애 조치를 통한 고가용성을 제공해야 합니다. 어떤 솔루션을 구현해야 합니까?",
+      "options": [
+        "Multi-AZ 구성을 사용한 Amazon ElastiCache for Memcached",
+        "클러스터 모드가 활성화되고 지속성을 사용한 Amazon ElastiCache for Redis",
+        "다중 리전 복제를 사용한 Amazon DynamoDB Accelerator(DAX)",
+        "사용자 정의 원본 및 엣지 캐싱을 사용한 Amazon CloudFront"
+      ],
+      "correct": 1,
+      "explanation": "ElastiCache for Redis는 복잡한 데이터 구조, pub/sub 메시징, 데이터 지속성(RDB/AOF)을 지원하며, 클러스터 모드는 여러 노드와 AZ에 걸쳐 자동 장애 조치를 통한 고가용성을 제공합니다.",
+      "domain": "고성능 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS ElastiCache Redis 클러스터 모드 문서",
+      "question_number": 36
+    },
+    {
+      "question": "솔루션 아키텍트가 여러 소스에서 10TB의 구조화된 데이터(CSV, JSON)와 50TB의 비구조화된 데이터(로그, 이미지)를 처리할 수 있는 데이터 레이크 솔루션을 설계해야 합니다. 솔루션은 배치 분석(일일 보고서)과 실시간 분석(스트리밍 대시보드)을 모두 지원해야 합니다. 가장 포괄적인 솔루션을 제공하는 조합은 무엇입니까?",
+      "options": [
+        "쿼리를 위한 AWS Glue ETL 및 Amazon Athena를 사용한 Amazon S3",
+        "외부 데이터 액세스를 위한 Redshift Spectrum을 사용한 Amazon Redshift",
+        "ETL 처리를 위한 Amazon Kinesis Data Streams 및 AWS Glue를 사용한 Amazon S3",
+        "스토리지를 위한 Apache Spark 및 Amazon S3를 사용한 Amazon EMR"
+      ],
+      "correct": 2,
+      "explanation": "S3는 구조화된 데이터와 비구조화된 데이터 모두에 대해 확장 가능한 스토리지를 제공하고, Kinesis Data Streams는 스트리밍 분석을 위한 실시간 데이터 수집을 처리하며, AWS Glue는 서버리스 방식으로 배치 및 스트리밍 데이터 처리 모두에 대한 ETL 기능을 제공합니다.",
+      "domain": "고성능 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS 데이터 레이크 참조 아키텍처",
+      "question_number": 37
+    },
+    {
+      "question": "한 회사가 RDS 데이터베이스 백업이 고객 관리 키로 암호화되고, 규정 준수를 위해 다른 리전(us-west-2)에 저장되며, 7년 동안 보관되도록 해야 합니다. 솔루션은 자동화되어야 하고 특정 시점 복구를 제공해야 합니다. 무엇을 구현해야 합니까?",
+      "options": [
+        "AWS KMS를 사용한 교차 리전 스냅샷 복사를 통한 RDS 자동화된 백업 활성화",
+        "교차 리전 백업 규칙, 고객 관리 KMS 키, 7년 보관을 사용한 AWS Backup 사용",
+        "KMS 암호화를 통해 Lambda를 사용하여 일일 수동 스냅샷 생성 및 복사",
+        "S3 교차 리전 복제 및 Glacier Deep Archive를 사용한 타사 백업 도구 사용"
+      ],
+      "correct": 1,
+      "explanation": "AWS Backup은 고객 관리 KMS 암호화, 자동화된 교차 리전 백업 기능, 7년 보관 정책, 특정 시점 복구를 통한 중앙 집중식 백업 관리를 제공하여 모든 규정 준수 및 운영 요구사항을 충족합니다.",
+      "domain": "보안 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS Backup 암호화 및 규정 준수",
+      "question_number": 38
+    },
+    {
+      "question": "애플리케이션이 하루 종일 가변 워크로드(100-500개 인스턴스 필요)를 경험하고 성능을 유지하면서 비용을 최적화해야 합니다. 애플리케이션은 짧은 중단(최대 2분)을 허용할 수 있고 워크로드의 30%에 대해 유연한 타이밍을 가집니다. 현재 월 비용은 $8000입니다. 최고의 비용 최적화를 제공하는 EC2 구매 옵션 조합은 무엇입니까?",
+      "options": [
+        "예측 가능한 30% 절약을 위한 100% 예약 인스턴스",
+        "유연성을 위한 70% 예약 인스턴스, 30% 온디맨드",
+        "최적의 비용-성능을 위한 40% 예약 인스턴스, 40% 스팟 인스턴스, 20% 온디맨드",
+        "여러 인스턴스 유형 및 중단 처리를 통한 100% 스팟 인스턴스"
+      ],
+      "correct": 2,
+      "explanation": "이 조합은 예약 인스턴스로 기준선 용량(30% 절약), 스팟 인스턴스로 상당한 비용 절감(워크로드의 40%에 대해 최대 90% 절약), 즉시 스케일링 요구를 위한 온디맨드 인스턴스를 제공하여 약 50%의 전체 비용 절감을 달성합니다.",
+      "domain": "비용 최적화 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS EC2 혼합 인스턴스 전략 가이드",
+      "question_number": 39
+    },
+    {
+      "question": "한 회사가 Windows Server 2016이 필요하고 컨테이너화할 수 없는 레거시 애플리케이션을 실행합니다. 애플리케이션은 CPU 사용률(목표 60%)을 기반으로 2개에서 20개 인스턴스로 스케일링해야 하고 30분 지속되는 사용자 세션에 대한 세션 선호도를 유지해야 합니다. 어떤 솔루션을 구현해야 합니까?",
+      "options": [
+        "스티키 세션이 활성화된 Application Load Balancer를 사용한 EC2 Auto Scaling 사용",
+        "프로비저닝된 동시성을 사용한 AWS Lambda에 애플리케이션 배포",
+        "서비스 검색을 사용한 EC2 시작 유형을 사용한 Amazon ECS 사용",
+        "사용자 정의 Windows AMI를 사용한 AWS Batch 구현"
+      ],
+      "correct": 0,
+      "explanation": "EC2 Auto Scaling은 특정 OS 요구사항을 가진 레거시 Windows 애플리케이션을 처리할 수 있고, ALB는 30분 세션 선호도를 위한 스티키 세션(지속 시간 기반)과 함께 로드 밸런싱을 제공하며, 60% CPU 사용률 목표를 기반으로 스케일링을 구성할 수 있습니다.",
+      "domain": "고성능 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS ALB 스티키 세션 구성",
+      "question_number": 40
+    },
+    {
+      "question": "한 회사가 온프레미스 시스템과 AWS 간에 5TB의 파일을 공유하기 위한 하이브리드 스토리지 솔루션을 구현해야 합니다. 솔루션은 자주 사용되는 파일(매일 액세스되는 데이터의 20%)에 대해 낮은 지연 시간 액세스(10ms 미만)를 제공하면서 모든 데이터를 S3에 저장해야 합니다. 어떤 AWS 서비스를 사용해야 합니까?",
+      "options": [
+        "온프레미스와 S3 간의 예약된 파일 동기화를 위한 AWS DataSync",
+        "로컬 캐시를 사용한 File Gateway 모드의 AWS Storage Gateway",
+        "S3 액세스를 위한 VPC 엔드포인트를 사용한 AWS Direct Connect",
+        "VPN을 통한 온프레미스 마운트 대상을 사용한 Amazon EFS"
+      ],
+      "correct": 1,
+      "explanation": "File Gateway 모드의 AWS Storage Gateway는 자주 액세스되는 파일에 대해 10ms 미만의 지연 시간으로 로컬 캐시(일반적으로 1TB)를 제공하면서 모든 데이터를 S3에 저장하여 지능형 캐싱을 통해 온프레미스와 클라우드 스토리지 간의 원활한 통합을 제공합니다.",
+      "domain": "고성능 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS Storage Gateway File Gateway 성능",
+      "question_number": 41
+    },
+    {
+      "question": "웹 애플리케이션이 사용자 인증을 위해 Amazon Cognito를 사용하고 사용자가 DynamoDB에서 자신의 데이터에만 액세스할 수 있는 세밀한 권한 부여를 구현해야 합니다. 애플리케이션에는 사용자별 데이터 파티션을 가진 50,000명의 사용자가 있습니다. 어떤 접근 방식을 구현해야 합니까?",
+      "options": [
+        "API Gateway에서 사용자 정의 권한 부여자를 사용한 Cognito User Pools 사용",
+        "Cognito 자격 증명을 기반으로 한 동적 정책 변수를 사용한 IAM 정책 구현",
+        "IAM 역할 및 정책 변수(${cognito-identity.amazonaws.com:sub})를 사용한 Cognito Identity Pools 사용",
+        "각 사용자 그룹에 대해 별도의 DynamoDB 테이블 생성"
+      ],
+      "correct": 2,
+      "explanation": "Cognito Identity Pools는 인증된 사용자의 자격 증명(${cognito-identity.amazonaws.com:sub})을 기반으로 DynamoDB 액세스를 동적으로 제한하는 정책 변수를 사용한 IAM 역할을 가정할 수 있어 개별 사용자 정책을 관리하지 않고도 세밀한 권한 부여를 가능하게 합니다.",
+      "domain": "보안 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS Cognito Identity Pools 정책 변수",
+      "question_number": 42
+    },
+    {
+      "question": "한 회사가 성능 병목 현상과 오류 패턴을 식별하기 위해 S3에 저장된 500GB의 애플리케이션 로그를 분석하려고 합니다. 분석은 비용 효율적이어야 하고, 인프라 관리가 필요하지 않아야 하며, SQL 쿼리를 지원해야 합니다. 예상 쿼리 빈도는 하루 10개 쿼리입니다. 어떤 서비스 조합을 사용해야 합니까?",
+      "options": [
+        "분산 처리를 위한 Apache Spark를 사용한 Amazon EMR",
+        "스키마 관리를 위한 AWS Glue Data Catalog를 사용한 Amazon Athena",
+        "데이터 로딩을 위한 COPY 명령을 사용한 Amazon Redshift",
+        "사용자 정의 분석 소프트웨어 및 EBS 스토리지를 사용한 EC2 인스턴스"
+      ],
+      "correct": 1,
+      "explanation": "Amazon Athena는 쿼리당 지불 가격(하루 10개 쿼리에 비용 효율적)으로 S3 데이터에 대한 서버리스 SQL 쿼리를 제공하고, AWS Glue Data Catalog는 인프라 관리 없이 로그 데이터 스키마를 구성하고 검색하는 데 도움이 됩니다.",
+      "domain": "비용 최적화 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS Athena 비용 효율적인 분석",
+      "question_number": 43
+    },
+    {
+      "question": "애플리케이션이 금융 거래에 대한 FIFO 메시지 순서와 정확히 한 번 처리를 보장하는 메시지 대기열이 필요합니다. 메시지는 거래 ID를 기반으로 한 중복 제거와 함께 소비자 그룹에 의해 엄격한 순서로 처리되어야 합니다. 시스템은 분당 1000개의 거래를 처리합니다. 어떤 AWS 서비스를 사용해야 합니까?",
+      "options": [
+        "애플리케이션 수준 중복 제거를 사용한 Amazon SQS Standard 대기열",
+        "거래 ID를 사용한 콘텐츠 기반 중복 제거를 사용한 Amazon SQS FIFO 대기열",
+        "순서를 위한 파티션 키를 사용한 Amazon Kinesis Data Streams",
+        "사용자 정의 이벤트 패턴 및 순서를 사용한 Amazon EventBridge"
+      ],
+      "correct": 1,
+      "explanation": "SQS FIFO 대기열은 거래 ID를 중복 제거 키로 사용한 콘텐츠 기반 중복 제거와 함께 엄격한 메시지 순서와 정확히 한 번 처리를 보장하여 금융 거래가 중복 없이 정확한 순서로 처리되도록 합니다.",
+      "domain": "복원력 있는 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS SQS FIFO 금융 사용 사례",
+      "question_number": 44
+    },
+    {
+      "question": "솔루션 아키텍트가 오프라인 기능과 연결이 복원될 때 자동 데이터 동기화가 필요한 100,000명의 사용자를 가진 모바일 애플리케이션을 위한 솔루션을 설계해야 합니다. 솔루션은 최종 작성자 우선 전략을 사용하여 충돌을 자동으로 처리해야 합니다. 어떤 AWS 서비스를 사용해야 합니까?",
+      "options": [
+        "변경 추적을 위한 DynamoDB Streams를 사용한 Amazon DynamoDB",
+        "오프라인 기능 및 충돌 해결을 사용한 AWS AppSync",
+        "모바일 액세스를 위한 Transfer Acceleration을 사용한 Amazon S3",
+        "데이터 처리를 위한 캐싱 및 Lambda를 사용한 Amazon API Gateway"
+      ],
+      "correct": 1,
+      "explanation": "AWS AppSync는 내장된 오프라인 기능, 연결이 복원될 때 자동 데이터 동기화, 모바일 애플리케이션을 위해 특별히 설계된 구성 가능한 충돌 해결 메커니즘(최종 작성자 우선 포함)을 제공합니다.",
+      "domain": "고성능 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS AppSync 오프라인 및 동기화 문서",
+      "question_number": 45
+    },
+    {
+      "question": "한 회사가 분당 50,000개의 요청을 처리하는 다중 계층 애플리케이션에 대한 포괄적인 모니터링 및 알림을 구현해야 합니다. 솔루션은 응답 시간의 이상 징후(기준선 200ms)를 감지하고 여러 채널을 통해 운영 팀에 자동으로 알려야 합니다. 가장 효과적인 모니터링을 제공하는 조합은 무엇입니까?",
+      "options": [
+        "사용자 정의 메트릭 및 정적 임계값 알람을 사용한 Amazon CloudWatch",
+        "분산 추적 및 CloudWatch Insights 쿼리를 사용한 AWS X-Ray",
+        "이상 징후 감지 모델 및 Amazon SNS 다중 프로토콜 알림을 사용한 Amazon CloudWatch",
+        "규정 준수 규칙 및 Amazon EventBridge 알림을 사용한 AWS Config"
+      ],
+      "correct": 2,
+      "explanation": "CloudWatch 이상 징후 감지는 기계 학습을 사용하여 응답 시간 메트릭의 비정상적인 패턴을 식별하고(200ms 기준선에서 편차 감지), SNS는 이상 징후가 감지될 때 운영 팀에 신뢰할 수 있는 다중 프로토콜 알림 전달(이메일, SMS, Slack)을 제공합니다.",
+      "domain": "복원력 있는 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS CloudWatch 이상 징후 감지 모범 사례",
+      "question_number": 46
+    },
+    {
+      "question": "전자상거래 애플리케이션이 플래시 세일 동안 트래픽 급증(2시간 동안 일반 트래픽의 10배)을 경험합니다. 애플리케이션은 거래를 위해 RDS PostgreSQL을 사용하고 쓰기 성능에 영향을 주지 않으면서 증가된 읽기 트래픽(초당 1000에서 10,000 읽기)을 처리해야 합니다. 어떤 솔루션을 구현해야 합니까?",
+      "options": [
+        "고가용성을 위한 RDS Multi-AZ 배포 활성화",
+        "연결 풀링을 통한 애플리케이션 수준 읽기 트래픽 라우팅으로 5개의 RDS 읽기 전용 복제본 생성",
+        "읽기 스케일링을 위한 Global Secondary Index를 사용한 DynamoDB 구현",
+        "모든 데이터베이스 작업을 위한 write-through 캐시로 ElastiCache 사용"
+      ],
+      "correct": 1,
+      "explanation": "5개의 RDS 읽기 전용 복제본을 생성하면 플래시 세일 동안 10배 증가한 읽기 트래픽을 처리할 수 있고(복제본당 초당 2000 읽기), 애플리케이션 수준 라우팅과 연결 풀링은 쓰기 작업에 영향을 주지 않으면서 성능을 최적화합니다.",
+      "domain": "고성능 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS RDS 읽기 전용 복제본 스케일링 패턴",
+      "question_number": 47
+    },
+    {
+      "question": "한 회사가 규정 준수를 위한 데이터 아카이빙 솔루션을 구현하려고 합니다. 데이터는 10년 동안 보관되어야 하고, 연간 1회 미만으로 액세스되며, 최대 12시간의 검색 시간이 허용됩니다. 현재 스토리지는 100TB이고 매월 5TB가 추가됩니다. 가장 비용 효율적인 솔루션을 제공하는 S3 스토리지 클래스는 무엇입니까?",
+      "options": [
+        "비용 최적화를 위한 수명 주기 정책을 사용한 S3 Standard-IA",
+        "필요할 때 더 빠른 액세스를 위한 신속 검색을 사용한 S3 Glacier",
+        "12시간 표준 검색을 사용한 S3 Glacier Deep Archive",
+        "내구성을 위한 교차 리전 복제를 사용한 S3 One Zone-IA"
+      ],
+      "correct": 2,
+      "explanation": "S3 Glacier Deep Archive는 드문 액세스 패턴과 허용 가능한 12시간 검색 시간을 가진 장기 아카이빙을 위한 가장 비용 효율적인 스토리지 클래스로(Glacier보다 최대 75% 저렴), 10년 규정 준수 보관 요구사항에 완벽합니다.",
+      "domain": "비용 최적화 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS S3 Glacier Deep Archive 가격 가이드",
+      "question_number": 48
+    },
+    {
+      "question": "솔루션 아키텍트가 GitHub에서 스테이징 환경으로 코드 변경 사항을 자동으로 배포한 다음 수동 승인 후 프로덕션으로 배포하는 CI/CD 파이프라인을 설계해야 합니다. 파이프라인은 5분 내에 롤백을 지원하고 하루 20개의 배포를 처리해야 합니다. 어떤 서비스 조합을 사용해야 합니까?",
+      "options": [
+        "수동 승인 게이트를 사용한 AWS CodeCommit, CodeBuild, CodeDeploy",
+        "GitHub 통합, 테스트를 위한 CodeBuild, 배포를 위한 CodeDeploy, 수동 승인 작업을 사용한 AWS CodePipeline",
+        "AWS CLI 배포 및 사용자 정의 승인 워크플로를 사용한 EC2의 Jenkins",
+        "AWS CodeDeploy 및 사용자 정의 알림 시스템을 사용한 GitHub Actions"
+      ],
+      "correct": 1,
+      "explanation": "AWS CodePipeline은 네이티브 GitHub 통합, 자동화된 테스트를 위한 CodeBuild, 5분 롤백 기능을 가진 블루-그린 배포를 위한 CodeDeploy, 프로덕션 배포 제어를 위한 내장 수동 승인 작업으로 전체 CI/CD 워크플로를 조율합니다.",
+      "domain": "복원력 있는 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "AWS CodePipeline GitHub 통합 가이드",
+      "question_number": 49
+    },
+    {
+      "question": "한 회사가 매일 2-4시간 동안 고성능 컴퓨팅 리소스가 필요한 데이터 처리 배치 작업을 실행합니다. 작업은 최대 10분의 중단을 허용할 수 있고 체크포인트에서 재시작할 수 있습니다. 현재 월 컴퓨팅 비용은 $5000입니다. 가장 비용 효율적인 솔루션을 제공하는 접근 방식은 무엇입니까?",
+      "options": [
+        "예측 가능한 비용을 위한 1년 약정 예약 인스턴스 사용",
+        "여러 AZ에 걸쳐 다양한 인스턴스 유형을 사용한 Spot Fleet을 통한 스팟 인스턴스 사용",
+        "보장된 가용성을 위한 Auto Scaling을 사용한 온디맨드 인스턴스 사용",
+        "혼합 인스턴스 유형 및 스팟/온디맨드 조합을 사용한 AWS Batch 사용"
+      ],
+      "correct": 1,
+      "explanation": "스팟 인스턴스는 내결함성 배치 워크로드에 대해 최대 90% 비용 절감을 제공합니다. 여러 AZ에 걸쳐 다양한 인스턴스 유형을 사용한 Spot Fleet은 비용 절감을 유지하면서 중단 위험을 줄입니다. 체크포인트 기능을 통해 10분 중단 후 작업을 재개할 수 있습니다.",
+      "domain": "비용 최적화 아키텍처 설계",
+      "difficulty": "어소시에이트",
+      "source": "배치 처리를 위한 AWS Spot Fleet 모범 사례",
+      "question_number": 50
+    }
+  ]
+}

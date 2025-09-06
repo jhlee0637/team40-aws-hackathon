@@ -38,39 +38,42 @@ export class Game {
         console.log('🎮 AWS 노들섬 퀴즈 RPG 초기화 시작...');
         
         try {
-            // 데이터 로딩 (번들된 데이터 사용)
             this.updateLoadingProgress(10, '데이터 로딩 중...');
+            await this.delay(100);
+            
+            this.updateLoadingProgress(30, '게임 데이터 로딩...');
             this.gameData = await DataLoader.loadGameData();
-            console.log('✅ 게임 데이터 로딩 완료:', this.gameData);
+            console.log('✅ 게임 데이터 로딩 완료');
+            await this.delay(200);
             
-            // 스프라이트 로딩
-            this.updateLoadingProgress(30, '스프라이트 로딩 중...');
-            await this.loadSprites();
-            
-            // 게임 시스템 초기화
-            this.updateLoadingProgress(50, '게임 시스템 초기화 중...');
+            this.updateLoadingProgress(50, '게임 시스템 초기화...');
             this.initializeGameSystems();
+            await this.delay(200);
             
-            // 맵 생성
-            this.updateLoadingProgress(70, '노들섬 맵 생성 중...');
+            this.updateLoadingProgress(70, '맵 생성 중...');
             this.generateEnhancedMap();
+            await this.delay(200);
             
-            // 엔티티 설정
-            this.updateLoadingProgress(90, '몬스터 및 NPC 배치 중...');
+            this.updateLoadingProgress(90, '엔티티 초기화...');
             this.entityManager.init(this.gameData);
+            await this.delay(200);
             
             this.updateLoadingProgress(100, '게임 시작!');
-            setTimeout(() => {
-                this.gameState = 'overworld';
-            }, 500);
+            await this.delay(500);
             
+            this.gameState = 'overworld';
             console.log('🎉 게임 초기화 완료!');
             this.gameLoop();
             
         } catch (error) {
             console.error('❌ 게임 초기화 실패:', error);
             this.gameState = 'error';
+            this.gameLoop();
         }
+    }
+    
+    delay(ms) {
+        return new Promise(resolve => setTimeout(resolve, ms));
     }
     
     updateLoadingProgress(progress, message) {
@@ -78,20 +81,17 @@ export class Game {
         this.loadingMessage = message;
     }
     
-    async loadSprites() {
-        return new Promise((resolve) => {
-            // 실제 프로젝트에서는 SVG 스프라이트를 로딩하지만
-            // 현재는 간단한 픽셀 아트로 대체
-            this.spritesLoaded = true;
-            console.log('✅ 스프라이트 로딩 완료 (픽셀 아트 모드)');
-            resolve();
-        });
-    }
+
     
     initializeGameSystems() {
-        const playerConfig = this.gameData.config.game.player;
-        this.player = new Player(playerConfig.startX, playerConfig.startY, playerConfig);
-        this.battleSystem = new BattleSystem(this, this.gameData);
+        const playerConfig = this.gameData?.config?.game?.player || {
+            startX: 400,
+            startY: 300,
+            speed: 2
+        };
+        
+        this.player = new Player(playerConfig.startX, playerConfig.startY);
+        this.battleSystem = new BattleSystem(this);
         this.mapRenderer = new MapRenderer(this, this.gameData);
         this.entityManager = new EntityManager(this);
         this.inputManager = new InputManager(this);
@@ -148,6 +148,22 @@ export class Game {
         
         // 노들섬의 특징적인 지형 추가
         this.addNodeulIslandFeatures();
+        
+        // 테스트용 몬스터 추가
+        this.addTestMonster();
+    }
+    
+    addTestMonster() {
+        // 간단한 테스트 몬스터
+        this.testMonster = {
+            x: 15 * this.tileSize,
+            y: 25 * this.tileSize,
+            name: "AWS 테스트 몬스터",
+            cert: "cp",
+            hp: 50,
+            maxHp: 50,
+            level: 1
+        };
     }
     
     addNodeulIslandFeatures() {
@@ -458,6 +474,31 @@ export class Game {
             const screenX = this.player.x - this.camera.x;
             const screenY = this.player.y - this.camera.y;
             this.player.render(this.ctx, screenX, screenY, this.sprites, this.spritesLoaded);
+        }
+        
+        // 테스트 몬스터 렌더링
+        if (this.testMonster) {
+            const screenX = this.testMonster.x - this.camera.x;
+            const screenY = this.testMonster.y - this.camera.y;
+            
+            if (screenX > -32 && screenX < this.canvas.width + 32 && 
+                screenY > -32 && screenY < this.canvas.height + 32) {
+                this.ctx.fillStyle = '#FF9900';
+                this.ctx.fillRect(screenX, screenY, 16, 16);
+                this.ctx.fillStyle = '#FFFFFF';
+                this.ctx.font = '8px monospace';
+                this.ctx.textAlign = 'center';
+                this.ctx.fillText('AWS', screenX + 8, screenY + 10);
+                
+                // 몬스터와 충돌 검사
+                const dx = this.player.x - this.testMonster.x;
+                const dy = this.player.y - this.testMonster.y;
+                const distance = Math.sqrt(dx * dx + dy * dy);
+                
+                if (distance < 20 && this.gameState === 'overworld') {
+                    this.battleSystem.start(this.testMonster);
+                }
+            }
         }
         
         // 특별 구역 렌더링

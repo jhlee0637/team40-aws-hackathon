@@ -3,59 +3,189 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AWS 노들섬 퀴즈 배틀 RPG</title>
+    <title>AWS 서티 RPG</title>
     <style>
-        body {
+        * {
             margin: 0;
             padding: 0;
-            background: #000;
+            box-sizing: border-box;
+        }
+        
+        body {
+            background: url('assets/images/background.jpg') center/cover no-repeat;
+            font-family: 'Courier New', monospace;
+            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            font-family: monospace;
+        }
+        
+        #gameContainer {
+            position: relative;
+            border: 2px solid #34495e;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
         }
         
         #gameCanvas {
-            border: 2px solid #FF9900;
-            background: #87CEEB;
+            display: block;
             image-rendering: pixelated;
             image-rendering: -moz-crisp-edges;
             image-rendering: crisp-edges;
+            background: transparent;
         }
         
-        .game-info {
+        #ui {
             position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 100;
+        }
+        
+        .ui-panel {
+            position: absolute;
+            background: rgba(0,0,0,0.8);
+            border: 2px solid #fff;
+            border-radius: 4px;
+            padding: 10px;
+            color: #fff;
+            font-size: 14px;
+            pointer-events: auto;
+        }
+        
+        #playerStats {
             top: 10px;
             left: 10px;
-            color: white;
-            font-size: 14px;
+            min-width: 200px;
         }
         
-        .loading {
-            position: absolute;
-            top: 50%;
+        #battleUI {
+            bottom: 10px;
             left: 50%;
-            transform: translate(-50%, -50%);
+            transform: translateX(-50%);
+            width: 80%;
+            max-width: 600px;
+            display: none;
+        }
+        
+        .battle-question {
+            margin-bottom: 15px;
+            font-size: 16px;
+            line-height: 1.4;
+        }
+        
+        .battle-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+        }
+        
+        .battle-option {
+            padding: 10px;
+            background: #3498db;
+            border: none;
+            border-radius: 4px;
             color: white;
-            font-size: 18px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: background 0.2s;
+        }
+        
+        .battle-option:hover {
+            background: #2980b9;
+        }
+        
+        .battle-option.correct {
+            background: #27ae60;
+        }
+        
+        .battle-option.incorrect {
+            background: #e74c3c;
+        }
+        
+        #loadingScreen {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            z-index: 1000;
+        }
+        
+        .game-title {
+            font-size: 32px;
+            font-weight: bold;
+            margin-bottom: 10px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
+        }
+        
+        .game-subtitle {
+            font-size: 16px;
+            margin-bottom: 30px;
+            text-align: center;
+            opacity: 0.9;
+        }
+        
+        .loading-spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid #34495e;
+            border-top: 4px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 20px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
-    <canvas id="gameCanvas" width="800" height="600"></canvas>
-    <div class="game-info">
-        <h3>🎮 AWS 노들섬 퀴즈 배틀 RPG</h3>
-        <p>WASD: 이동 | Space: 상호작용 | 1-4: 퀴즈 답변</p>
-    </div>
-    <div id="loading" class="loading">게임 로딩 중...</div>
-    
-    <script type="module">
-        import { Game } from './src/classes/Game.js';
+    <div id="gameContainer">
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
         
-        document.getElementById('loading').style.display = 'none';
-        console.log('게임 시작!');
-        new Game();
-    </script>
+        <div id="ui">
+            <div id="playerStats" class="ui-panel">
+                <div>레벨: <span id="playerLevel">1</span></div>
+                <div>경험치: <span id="playerExp">0</span>/<span id="playerMaxExp">100</span></div>
+                <div>AWS 크레딧: <span id="playerCredits">0</span></div>
+            </div>
+            
+            <div id="battleUI" class="ui-panel">
+                <div class="battle-question" id="battleQuestion"></div>
+                <div class="battle-options" id="battleOptions"></div>
+            </div>
+        </div>
+        
+        <div id="loadingScreen">
+            <div class="game-title">☁️ AWS 퀴즈 RPG</div>
+            <div class="game-subtitle">
+                AWS 자격증 학습을 위한 인터랙티브 퀴즈 게임<br>
+                노들섬에서 AWS 서비스들과 퀴즈 배틀로 실력 향상
+            </div>
+            <div class="loading-spinner"></div>
+            <div id="loadingProgress">게임 로딩 중...</div>
+            <div style="margin-top: 20px; font-size: 14px; opacity: 0.8;">
+                조작법: A/D(좌우이동), Space(점프), AWS 서비스 몬스터와 충돌 시 퀴즈 시작
+            </div>
+        </div>
+    </div>
+    
+    <script type="module" src="src/main.js"></script>
 </body>
 </html>

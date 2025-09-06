@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AWS 퀴즈 RPG - 테스트</title>
+    <style>
+        body {
+            background: url('assets/images/background.jpg') center/cover no-repeat, 
+                        linear-gradient(135deg, #87CEEB 0%, #98D8E8 100%);
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            font-family: 'Courier New', monospace;
+        }
+        
+        #gameContainer {
+            width: 800px;
+            height: 600px;
+            border: 2px solid #34495e;
+            border-radius: 8px;
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        #gameCanvas {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            image-rendering: pixelated;
+        }
+        
+        #ui {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            z-index: 100;
+        }
+        
+        #stageInfo {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
+            z-index: 100;
+        }
+        
+        #hpBar {
+            width: 200px;
+            height: 20px;
+            background: rgba(255,0,0,0.3);
+            border: 2px solid #fff;
+            border-radius: 10px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        
+        #hpFill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00);
+            transition: width 0.3s;
+        }
+        
+        #battleUI {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            display: none;
+            max-width: 500px;
+        }
+        
+        .battle-options {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        
+        .battle-option {
+            padding: 10px;
+            background: #3498db;
+            border: none;
+            border-radius: 5px;
+            color: white;
+            cursor: pointer;
+        }
+        
+        .battle-option:hover {
+            background: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div id="gameContainer">
+        <canvas id="gameCanvas" width="800" height="600"></canvas>
+        <div id="ui">
+            <div>레벨: 1</div>
+            <div>경험치: 0/100</div>
+            <div>AWS 크레딧: 0</div>
+            <div>HP: <span id="hpText">100/100</span></div>
+            <div id="hpBar">
+                <div id="hpFill" style="width: 100%;"></div>
+            </div>
+            <div style="margin-top: 10px;">조작: A/D(이동), Space(점프)</div>
+        </div>
+        
+        <div id="stageInfo">
+            <div id="stageName">CLF 기초 스테이지</div>
+            <div>난이도: <span id="stageDifficulty">CLF</span></div>
+            <div>오른쪽 끝으로 가면 다음 스테이지</div>
+        </div>
+        
+        <div id="battleUI">
+            <div id="battleQuestion"></div>
+            <div class="battle-options" id="battleOptions"></div>
+        </div>
+    </div>
+    
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 게임 상태
+        const game = {
+            player: {
+                x: 100,
+                y: 400,
+                width: 32,
+                height: 32,
+                velocityY: 0,
+                onGround: false,
+                speed: 3,
+                jumpPower: -12,
+                gravity: 0.5,
+                hp: 100,
+                maxHp: 100
+            },
+            currentStage: 0,
+            cameraX: 0,
+            stages: [
+                {
+                    name: "초급 스테이지 (CLF)",
+                    difficulty: "CLF",
+                    monsters: [
+                        { x: 250, y: 418, width: 32, height: 32, name: "EC2 기초", direction: 1, speed: 1, difficulty: "CLF", velocityY: 0, onGround: false, gravity: 0.5 },
+                        { x: 450, y: 518, width: 32, height: 32, name: "S3 기초", direction: -1, speed: 0.8, difficulty: "CLF", velocityY: 0, onGround: false, gravity: 0.5 },
+                        { x: 350, y: 318, width: 32, height: 32, name: "Lambda 기초", direction: 1, speed: 0.6, difficulty: "CLF", velocityY: 0, onGround: false, gravity: 0.5 }
+                    ],
+                    platforms: [
+                        { x: 200, y: 450, width: 120, height: 15 },
+                        { x: 350, y: 350, width: 120, height: 15 },
+                        { x: 150, y: 300, width: 80, height: 15 },
+                        { x: 500, y: 400, width: 100, height: 15 }
+                    ]
+                },
+                {
+                    name: "중급 스테이지 (SAA)",
+                    difficulty: "SAA",
+                    monsters: [
+                        { x: 1050, y: 418, width: 32, height: 32, name: "VPC", direction: 1, speed: 1.2, difficulty: "SAA", velocityY: 0, onGround: false, gravity: 0.5 },
+                        { x: 1250, y: 518, width: 32, height: 32, name: "ALB", direction: -1, speed: 1, difficulty: "SAA", velocityY: 0, onGround: false, gravity: 0.5 },
+                        { x: 1450, y: 318, width: 32, height: 32, name: "RDS", direction: 1, speed: 0.9, difficulty: "SAA", velocityY: 0, onGround: false, gravity: 0.5 },
+                        { x: 1150, y: 268, width: 32, height: 32, name: "CloudFront", direction: -1, speed: 1.1, difficulty: "SAA", velocityY: 0, onGround: false, gravity: 0.5 }
+                    ],
+                    platforms: [
+                        { x: 1000, y: 450, width: 120, height: 15 },
+                        { x: 1200, y: 350, width: 120, height: 15 },
+                        { x: 1400, y: 350, width: 120, height: 15 },
+                        { x: 1100, y: 300, width: 100, height: 15 },
+                        { x: 1300, y: 250, width: 80, height: 15 },
+                        { x: 950, y: 380, width: 60, height: 15 }
+                    ]
+                },
+                {
+                    name: "고급 스테이지 (SAP)",
+                    difficulty: "SAP",
+                    monsters: [
+                        { x: 1850, y: 418, width: 32, height: 32, name: "Organizations", direction: 1, speed: 1.5, difficulty: "SAP", velocityY: 0, onGround: false, gravity: 0.5 },
+                        { x: 2050, y: 318, width: 32, height: 32, name: "Control Tower", direction: -1, speed: 1.3, difficulty: "SAP", velocityY: 0, onGround: false, gravity: 0.5 },
+                        { x: 2250, y: 518, width: 32, height: 32, name: "Enterprise", direction: 1, speed: 1.1, difficulty: "SAP", velocityY: 0, onGround: false, gravity: 0.5 },
+                        { x: 1950, y: 218, width: 32, height: 32, name: "Architecture", direction: -1, speed: 1.4, difficulty: "SAP", velocityY: 0, onGround: false, gravity: 0.5 },
+                        { x: 2150, y: 168, width: 32, height: 32, name: "Professional", direction: 1, speed: 1.2, difficulty: "SAP", velocityY: 0, onGround: false, gravity: 0.5 },
+                        { x: 2350, y: 418, width: 32, height: 32, name: "최강 드래곤", direction: -1, speed: 2.0, difficulty: "SAP", velocityY: 0, onGround: false, gravity: 0.5, isBoss: true }
+                    ],
+                    platforms: [
+                        { x: 1800, y: 450, width: 120, height: 15 },
+                        { x: 2000, y: 350, width: 120, height: 15 },
+                        { x: 2200, y: 350, width: 120, height: 15 },
+                        { x: 1900, y: 250, width: 100, height: 15 },
+                        { x: 2100, y: 200, width: 100, height: 15 },
+                        { x: 1850, y: 300, width: 80, height: 15 },
+                        { x: 2050, y: 180, width: 60, height: 15 },
+                        { x: 2300, y: 280, width: 80, height: 15 }
+                    ]
+                }
+            ],
+            worldWidth: 2400,
+            groundY: 550,
+            keys: {},
+            playerImg: null,
+            dragonImg: null,
+            gameState: 'playing',
+            currentBattle: null,
+            quizData: {
+                CLF: [
+                    {
+                        question: "AWS 클라우드의 6가지 장점 중 하나가 아닌 것은?",
+                        options: ["민첩성 향상", "비용 절감", "데이터 소유권 보장", "글로벌 확장"],
+                        correct: 2
+                    },
+                    {
+                        question: "AWS의 컴퓨팅 서비스는 무엇입니까?",
+                        options: ["EC2", "S3", "RDS", "CloudFront"],
+                        correct: 0
+                    },
+                    {
+                        question: "S3 버킷 이름의 특징은?",
+                        options: ["리전별로 고유", "계정별로 고유", "전 세계적으로 고유", "AZ별로 고유"],
+                        correct: 2
+                    }
+                ],
+                SAA: [
+                    {
+                        question: "Multi-AZ RDS 배포의 주요 목적은?",
+                        options: ["성능 향상", "고가용성", "비용 절감", "보안 강화"],
+                        correct: 1
+                    },
+                    {
+                        question: "VPC에서 인터넷 게이트웨이의 역할은?",
+                        options: ["내부 통신", "인터넷 연결", "DNS 해석", "로드 밸런싱"],
+                        correct: 1
+                    },
+                    {
+                        question: "Auto Scaling에서 인스턴스를 종료할 때 우선순위는?",
+                        options: ["가장 오래된 인스턴스", "가장 새로운 인스턴스", "가장 비싼 인스턴스", "가장 저렴한 인스턴스"],
+                        correct: 0
+                    }
+                ],
+                SAP: [
+                    {
+                        question: "AWS Organizations의 주요 기능은?",
+                        options: ["비용 관리", "계정 통합 관리", "보안 강화", "성능 최적화"],
+                        correct: 1
+                    },
+                    {
+                        question: "AWS Control Tower의 목적은?",
+                        options: ["멀티 계정 환경 설정", "비용 최적화", "보안 감사", "성능 모니터링"],
+                        correct: 0
+                    }
+                ]
+            }
+        };
+        
+        // 이미지 로드
+        game.playerImg = new Image();
+        game.playerImg.src = 'assets/images/Cha.PNG';
+        
+        game.clfImg = new Image();
+        game.clfImg.src = 'assets/images/CLF.PNG';
+        
+        game.saaImg = new Image();
+        game.saaImg.src = 'assets/images/SAA.PNG';
+        
+        game.sapImg = new Image();
+        game.sapImg.src = 'assets/images/SAP.PNG';
+        
+        game.dragonImg = new Image();
+        game.dragonImg.src = 'assets/images/dragon.PNG';
+        
+        // 키 입력
+        document.addEventListener('keydown', (e) => {
+            game.keys[e.code] = true;
+        });
+        
+        document.addEventListener('keyup', (e) => {
+            game.keys[e.code] = false;
+        });
+        
+        // 플레이어 그리기
+        function drawPlayer() {
+            const p = game.player;
+            
+            if (game.playerImg.complete) {
+                ctx.drawImage(game.playerImg, p.x, p.y, p.width, p.height);
+            } else {
+                // 폴백 그리기
+                ctx.fillStyle = '#27ae60';
+                ctx.fillRect(p.x + 8, p.y + 8, 16, 20);
+                
+                ctx.fillStyle = '#f4c2a1';
+                ctx.fillRect(p.x + 10, p.y + 4, 12, 12);
+                
+                ctx.fillStyle = '#000';
+                ctx.fillRect(p.x + 12, p.y + 8, 2, 2);
+                ctx.fillRect(p.x + 18, p.y + 8, 2, 2);
+            }
+        }
+        
+        // 몬스터 그리기
+        function drawMonsters() {
+            game.stages.forEach(stage => {
+                stage.monsters.forEach(monster => {
+                    let img = null;
+                    
+                    // 보스 드래곤은 dragon.PNG 사용
+                    if (monster.isBoss && game.dragonImg.complete) {
+                        img = game.dragonImg;
+                    } else {
+                        // 난이도별 이미지 선택
+                        if (monster.difficulty === 'CLF' && game.clfImg.complete) {
+                            img = game.clfImg;
+                        } else if (monster.difficulty === 'SAA' && game.saaImg.complete) {
+                            img = game.saaImg;
+                        } else if (monster.difficulty === 'SAP' && game.sapImg.complete) {
+                            img = game.sapImg;
+                        }
+                    }
+                    
+                    if (img) {
+                        ctx.drawImage(img, monster.x, monster.y, monster.width, monster.height);
+                    } else {
+                        // 폴백 색상
+                        let color = '#e74c3c';
+                        if (monster.difficulty === 'CLF') color = '#27ae60';
+                        else if (monster.difficulty === 'SAA') color = '#f39c12';
+                        else if (monster.difficulty === 'SAP') color = '#8e44ad';
+                        
+                        ctx.fillStyle = color;
+                        ctx.fillRect(monster.x, monster.y, monster.width, monster.height);
+                    }
+                    
+                    // 이름 표시
+                    ctx.fillStyle = '#fff';
+                    ctx.font = '12px Arial';
+                    ctx.fillText(monster.name, monster.x, monster.y - 5);
+                });
+            });
+        }
+        
+        // 게임 업데이트
+        function update() {
+            if (game.gameState === 'playing') {
+                updatePlayer();
+                updateMonsters();
+                checkCollisions();
+            }
+        }
+        
+        function updatePlayer() {
+            const p = game.player;
+            
+            // 좌우 이동
+            if (game.keys['KeyA'] || game.keys['ArrowLeft']) {
+                p.x -= p.speed;
+            }
+            if (game.keys['KeyD'] || game.keys['ArrowRight']) {
+                p.x += p.speed;
+            }
+            
+            // 점프
+            if ((game.keys['Space'] || game.keys['ArrowUp']) && p.onGround) {
+                p.velocityY = p.jumpPower;
+                p.onGround = false;
+            }
+            
+            // 중력
+            p.velocityY += p.gravity;
+            p.y += p.velocityY;
+            
+            // 플랫폼 충돌 체크
+            p.onGround = false;
+            const currentStage = game.stages[game.currentStage];
+            for (const platform of currentStage.platforms) {
+                if (p.x < platform.x + platform.width &&
+                    p.x + p.width > platform.x &&
+                    p.y + p.height > platform.y &&
+                    p.y + p.height < platform.y + platform.height + 10 &&
+                    p.velocityY >= 0) {
+                    p.y = platform.y - p.height;
+                    p.velocityY = 0;
+                    p.onGround = true;
+                }
+            }
+            
+            // 지면 충돌
+            if (p.y + p.height >= game.groundY) {
+                p.y = game.groundY - p.height;
+                p.velocityY = 0;
+                p.onGround = true;
+            }
+            
+            // 스테이지 전환 체크
+            const stageEnd = (game.currentStage + 1) * 800 - 50;
+            if (p.x > stageEnd && game.currentStage < game.stages.length - 1) {
+                game.currentStage++;
+                p.x = game.currentStage * 800 + 50;
+                updateStageInfo();
+            }
+            
+            // 이전 스테이지로 돌아가기
+            const stageStart = game.currentStage * 800 + 50;
+            if (p.x < stageStart && game.currentStage > 0) {
+                game.currentStage--;
+                p.x = (game.currentStage + 1) * 800 - 50;
+                updateStageInfo();
+            }
+            
+            // 경계 체크
+            p.x = Math.max(0, Math.min(game.worldWidth - p.width, p.x));
+            
+            // 카메라 업데이트
+            game.cameraX = Math.max(0, Math.min(p.x - 400, game.worldWidth - 800));
+        }
+        
+        function updateMonsters() {
+            const currentStage = game.stages[game.currentStage];
+            currentStage.monsters.forEach(monster => {
+                // 중력 적용
+                monster.velocityY += monster.gravity;
+                monster.y += monster.velocityY;
+                
+                // 플랫폼 충돌 체크
+                monster.onGround = false;
+                for (const platform of currentStage.platforms) {
+                    if (monster.x < platform.x + platform.width &&
+                        monster.x + monster.width > platform.x &&
+                        monster.y + monster.height > platform.y &&
+                        monster.y + monster.height < platform.y + platform.height + 10 &&
+                        monster.velocityY >= 0) {
+                        monster.y = platform.y - monster.height;
+                        monster.velocityY = 0;
+                        monster.onGround = true;
+                    }
+                }
+                
+                // 지면 충돌
+                if (monster.y + monster.height >= game.groundY) {
+                    monster.y = game.groundY - monster.height;
+                    monster.velocityY = 0;
+                    monster.onGround = true;
+                }
+                
+                // 좌우 이동 (지면에 있을 때만)
+                if (monster.onGround) {
+                    monster.x += monster.direction * monster.speed;
+                }
+                
+                // 스테이지 범위 내에서 방향 전환
+                const stageStart = game.currentStage * 800;
+                const stageEnd = (game.currentStage + 1) * 800;
+                if (monster.x <= stageStart || monster.x >= stageEnd - monster.width) {
+                    monster.direction *= -1;
+                }
+            });
+        }
+        
+        function checkCollisions() {
+            const p = game.player;
+            const currentStage = game.stages[game.currentStage];
+            
+            currentStage.monsters.forEach(monster => {
+                if (p.x < monster.x + monster.width &&
+                    p.x + p.width > monster.x &&
+                    p.y < monster.y + monster.height &&
+                    p.y + p.height > monster.y) {
+                    startBattle(monster);
+                }
+            });
+        }
+        
+        // 렌더링
+        function render() {
+            // 화면 지우기
+            ctx.clearRect(0, 0, 800, 600);
+            
+            // 카메라 오프셋 적용
+            ctx.save();
+            ctx.translate(-game.cameraX, 0);
+            
+            // 지면 그리기
+            ctx.fillStyle = 'rgba(144, 238, 144, 0.3)';
+            ctx.fillRect(0, game.groundY, game.worldWidth, 600 - game.groundY);
+            
+            // 스테이지 구분선
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.lineWidth = 2;
+            for (let i = 1; i < game.stages.length; i++) {
+                ctx.beginPath();
+                ctx.moveTo(i * 800, 0);
+                ctx.lineTo(i * 800, 600);
+                ctx.stroke();
+            }
+            
+            // 플랫폼 그리기
+            ctx.fillStyle = 'rgba(139, 69, 19, 0.8)';
+            game.stages.forEach(stage => {
+                stage.platforms.forEach(platform => {
+                    ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+                });
+            });
+            
+            // 몬스터 그리기
+            drawMonsters();
+            
+            // 플레이어 그리기
+            drawPlayer();
+            
+            ctx.restore();
+            
+            // HP 업데이트
+            updateHPBar();
+        }
+        
+        function updateHPBar() {
+            const hpPercent = (game.player.hp / game.player.maxHp) * 100;
+            document.getElementById('hpFill').style.width = hpPercent + '%';
+            document.getElementById('hpText').textContent = game.player.hp + '/' + game.player.maxHp;
+        }
+        
+        // 게임 루프
+        function gameLoop() {
+            update();
+            render();
+            requestAnimationFrame(gameLoop);
+        }
+        
+        // 배틀 시스템
+        function startBattle(monster) {
+            if (game.gameState === 'battle') return;
+            
+            game.gameState = 'battle';
+            const difficulty = monster.difficulty;
+            const questions = game.quizData[difficulty];
+            
+            game.currentBattle = {
+                monster: monster,
+                question: questions[Math.floor(Math.random() * questions.length)],
+                difficulty: difficulty
+            };
+            
+            showBattleUI();
+        }
+        
+        function showBattleUI() {
+            const battleUI = document.getElementById('battleUI');
+            const battle = game.currentBattle;
+            const question = battle.question;
+            
+            document.getElementById('battleQuestion').innerHTML = `
+                <div style="margin-bottom: 10px;">
+                    <strong>[${battle.difficulty}] ${battle.monster.name}</strong>와의 배틀!
+                </div>
+                <div>${question.question}</div>
+            `;
+            
+            const optionsContainer = document.getElementById('battleOptions');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'battle-option';
+                button.textContent = option;
+                button.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(button);
+            });
+            
+            battleUI.style.display = 'block';
+        }
+        
+        function selectAnswer(selectedIndex) {
+            const question = game.currentBattle.question;
+            const isCorrect = selectedIndex === question.correct;
+            
+            if (!isCorrect) {
+                game.player.hp = Math.max(0, game.player.hp - 20);
+                if (game.player.hp <= 0) {
+                    alert('게임 오버! HP가 0이 되었습니다.');
+                    location.reload();
+                    return;
+                }
+            }
+            
+            setTimeout(() => {
+                endBattle();
+            }, 1000);
+        }
+        
+        function endBattle() {
+            document.getElementById('battleUI').style.display = 'none';
+            game.gameState = 'playing';
+            game.currentBattle = null;
+        }
+        
+        function updateStageInfo() {
+            const currentStage = game.stages[game.currentStage];
+            document.getElementById('stageName').textContent = currentStage.name;
+            document.getElementById('stageDifficulty').textContent = currentStage.difficulty;
+        }
+        
+        // 게임 시작
+        updateStageInfo();
+        gameLoop();
+    </script>
+</body>
+</html>

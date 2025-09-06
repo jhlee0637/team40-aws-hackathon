@@ -1,0 +1,771 @@
+{
+  "metadata": {
+    "title": "AWS 공인 클라우드 실무자 - 최종 시험",
+    "questions": 50,
+    "time_limit": "90분",
+    "passing_score": "700/1000",
+    "created": "2025-09-06T10:50:59.582637",
+    "exam_code": "CLF-C01",
+    "difficulty": "기초",
+    "version": "3.0 - 최종",
+    "improvements": "중복 문제 완전 제거, 고급 시나리오 기반 문제, 다중 서비스 통합 시나리오, 실제 비즈니스 사용 사례, 포괄적인 도메인 커버리지, 컨텍스트가 포함된 향상된 설명",
+    "domains": {
+      "클라우드 개념": "26%",
+      "보안 및 규정 준수": "25%",
+      "기술": "33%",
+      "청구 및 요금": "16%"
+    }
+  },
+  "questions": [
+    {
+      "question": "시간이 지남에 따라 AWS 비용과 사용량을 시각화하고, 이해하고, 관리하는 데 도움이 되는 AWS 서비스는 무엇입니까?",
+      "options": [
+        "AWS CloudTrail",
+        "AWS Cost Explorer",
+        "Amazon CloudWatch",
+        "AWS Systems Manager"
+      ],
+      "correct": 1,
+      "explanation": "AWS Cost Explorer는 AWS 비용과 사용 패턴을 이해하고 관리하는 데 도움이 되는 시각화 및 분석 도구를 제공합니다.",
+      "domain": "청구 및 요금",
+      "difficulty": "기초",
+      "question_number": 1,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "AWS 프리 티어는 신규 고객에게 무엇을 제공합니까?",
+      "options": [
+        "모든 서비스의 무제한 무료 사용",
+        "선택된 서비스의 12개월 무료 사용 및 항상 무료 티어",
+        "모든 서비스에 대한 영구적인 50% 할인",
+        "1년간 무료 프리미엄 지원"
+      ],
+      "correct": 1,
+      "explanation": "AWS 프리 티어는 신규 고객에게 선택된 서비스의 12개월 무료 사용과 일부 서비스의 항상 무료 티어를 제공합니다.",
+      "domain": "청구 및 요금",
+      "difficulty": "기초",
+      "question_number": 2,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "사용하지 않는 EC2 용량에 입찰하여 상당한 비용 절감을 가능하게 하는 AWS 요금 모델은 무엇입니까?",
+      "options": [
+        "온디맨드 인스턴스",
+        "예약 인스턴스",
+        "스팟 인스턴스",
+        "전용 호스트"
+      ],
+      "correct": 2,
+      "explanation": "스팟 인스턴스는 사용하지 않는 EC2 용량에 입찰할 수 있게 하여 온디맨드 요금 대비 최대 90%의 비용 절감을 제공합니다.",
+      "domain": "청구 및 요금",
+      "difficulty": "기초",
+      "question_number": 3,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "회사에서 서버를 관리하지 않고 이벤트에 응답하여 코드를 실행해야 합니다. 가장 적합한 AWS 서비스는 무엇입니까?",
+      "options": [
+        "Amazon EC2",
+        "AWS Lambda",
+        "Amazon ECS",
+        "AWS Batch"
+      ],
+      "correct": 1,
+      "explanation": "AWS Lambda는 서버 관리 없이 이벤트에 응답하여 코드를 실행하는 서버리스 컴퓨팅 서비스입니다.",
+      "domain": "기술",
+      "difficulty": "기초",
+      "question_number": 4,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "애플리케이션 구성 요소를 분리하기 위한 관리형 메시지 큐잉을 제공하는 AWS 서비스는 무엇입니까?",
+      "options": [
+        "Amazon SNS",
+        "Amazon SQS",
+        "Amazon Kinesis",
+        "AWS Step Functions"
+      ],
+      "correct": 1,
+      "explanation": "Amazon SQS(Simple Queue Service)는 마이크로서비스와 서버리스 애플리케이션을 분리하고 확장하기 위한 관리형 메시지 큐잉을 제공합니다.",
+      "domain": "기술",
+      "difficulty": "기초",
+      "question_number": 5,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "온디맨드 요금과 비교하여 AWS 예약 인스턴스의 주요 이점은 무엇입니까?",
+      "options": [
+        "더 나은 성능 보장",
+        "예측 가능한 워크로드에 대한 상당한 비용 절감",
+        "자동 확장 기능",
+        "우선 기술 지원"
+      ],
+      "correct": 1,
+      "explanation": "예약 인스턴스는 1년 또는 3년 약정으로 예측 가능한 워크로드에 대해 온디맨드 요금 대비 최대 75%의 비용 절감을 제공합니다.",
+      "domain": "청구 및 요금",
+      "difficulty": "기초",
+      "question_number": 6,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "회사에서 수요에 따라 EC2 인스턴스를 자동으로 확장하려고 합니다. 어떤 서비스를 구성해야 합니까?",
+      "options": [
+        "Elastic Load Balancing",
+        "AWS Auto Scaling",
+        "Amazon CloudWatch",
+        "AWS Systems Manager"
+      ],
+      "correct": 1,
+      "explanation": "AWS Auto Scaling은 수요와 사전 정의된 정책에 따라 EC2 인스턴스 수를 자동으로 조정합니다.",
+      "domain": "기술",
+      "difficulty": "기초",
+      "question_number": 7,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "기본 인프라에 대한 가장 높은 수준의 제어를 제공하는 클라우드 서비스 모델은 무엇입니까?",
+      "options": [
+        "Software as a Service (SaaS)",
+        "Platform as a Service (PaaS)",
+        "Infrastructure as a Service (IaaS)",
+        "Function as a Service (FaaS)"
+      ],
+      "correct": 2,
+      "explanation": "IaaS는 가상 머신, 스토리지, 네트워크와 같은 인프라 구성 요소에 대한 가장 많은 제어권을 제공합니다.",
+      "domain": "클라우드 개념",
+      "difficulty": "기초",
+      "question_number": 8,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "클라우드 환경에서 Infrastructure as Code (IaC)의 주요 이점은 무엇입니까?",
+      "options": [
+        "클라우드 서비스 비용 절감",
+        "일관되고 반복 가능한 인프라 배포 가능",
+        "모니터링 필요성 제거",
+        "100% 가동 시간 보장"
+      ],
+      "correct": 1,
+      "explanation": "IaC는 인프라를 코드로 정의할 수 있게 하여 일관되고 버전 제어되며 반복 가능한 배포를 가능하게 합니다.",
+      "domain": "클라우드 개념",
+      "difficulty": "기초",
+      "question_number": 9,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "일반적으로 AWS 요금에 영향을 주지 않는 요소는 무엇입니까?",
+      "options": [
+        "리소스가 배포된 리전",
+        "전송된 데이터 양",
+        "리소스가 사용되는 시간대",
+        "사용된 리소스의 유형과 크기"
+      ],
+      "correct": 2,
+      "explanation": "AWS 요금은 일반적으로 하루 중 시간에 영향을 받지 않지만, 리전, 데이터 전송, 리소스 유형/크기에는 영향을 받습니다.",
+      "domain": "청구 및 요금",
+      "difficulty": "기초",
+      "question_number": 10,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "회사에서 실시간으로 스트리밍 데이터를 처리해야 합니다. 어떤 AWS 서비스를 사용해야 합니까?",
+      "options": [
+        "Amazon S3",
+        "Amazon Kinesis",
+        "Amazon SQS",
+        "Amazon SNS"
+      ],
+      "correct": 1,
+      "explanation": "Amazon Kinesis는 대규모 스트리밍 데이터의 실시간 처리를 위해 설계되었습니다.",
+      "domain": "기술",
+      "difficulty": "기초",
+      "question_number": 11,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "회사에서 수요에 따라 자동으로 확장할 수 있는 NoSQL 데이터베이스가 필요합니다. 어떤 서비스를 선택해야 합니까?",
+      "options": [
+        "Amazon RDS",
+        "Amazon DynamoDB",
+        "Amazon Redshift",
+        "Amazon ElastiCache"
+      ],
+      "correct": 1,
+      "explanation": "Amazon DynamoDB는 수요에 따라 자동으로 확장되는 완전 관리형 NoSQL 데이터베이스입니다.",
+      "domain": "기술",
+      "difficulty": "기초",
+      "question_number": 12,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "전 세계 웹사이트 성능을 향상시키기 위해 콘텐츠 전송 네트워크를 제공하는 AWS 서비스는 무엇입니까?",
+      "options": [
+        "Amazon Route 53",
+        "Amazon CloudFront",
+        "Elastic Load Balancing",
+        "AWS Global Accelerator"
+      ],
+      "correct": 1,
+      "explanation": "Amazon CloudFront는 전 세계 엣지 로케이션에서 콘텐츠를 캐시하여 글로벌 사용자의 성능을 향상시키는 CDN입니다.",
+      "domain": "기술",
+      "difficulty": "기초",
+      "question_number": 13,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "회사가 물리적 서버 소유에서 클라우드 서비스 사용으로 이전할 때의 주요 재정적 이점은 무엇입니까?",
+      "options": [
+        "모든 IT 비용 제거",
+        "자본 지출을 운영 지출로 전환",
+        "50% 비용 절감 보장",
+        "무제한 무료 리소스 제공"
+      ],
+      "correct": 1,
+      "explanation": "클라우드 컴퓨팅은 대규모 초기 자본 지출(CapEx)을 예측 가능한 운영 지출(OpEx)로 전환합니다.",
+      "domain": "클라우드 개념",
+      "difficulty": "기초",
+      "question_number": 14,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "애플리케이션 성능을 향상시키기 위해 인메모리 캐싱을 제공하는 서비스는 무엇입니까?",
+      "options": [
+        "Amazon RDS",
+        "Amazon DynamoDB",
+        "Amazon ElastiCache",
+        "Amazon Redshift"
+      ],
+      "correct": 2,
+      "explanation": "Amazon ElastiCache는 애플리케이션 성능을 향상시키기 위해 인메모리 캐싱 서비스(Redis 및 Memcached)를 제공합니다.",
+      "domain": "기술",
+      "difficulty": "기초",
+      "question_number": 15,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "DNS 해석 및 도메인 등록 서비스를 제공하는 AWS 서비스는 무엇입니까?",
+      "options": [
+        "Amazon CloudFront",
+        "Amazon Route 53",
+        "Elastic Load Balancing",
+        "Amazon VPC"
+      ],
+      "correct": 1,
+      "explanation": "Amazon Route 53은 도메인 등록 및 상태 확인도 제공하는 확장 가능한 DNS 서비스입니다.",
+      "domain": "기술",
+      "difficulty": "기초",
+      "question_number": 16,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "회사에서 SQL 인젝션 및 크로스 사이트 스크립팅 공격으로부터 웹 애플리케이션을 보호하려고 합니다. 어떤 AWS 서비스를 사용해야 합니까?",
+      "options": [
+        "Amazon GuardDuty",
+        "AWS WAF",
+        "AWS Shield",
+        "Amazon Inspector"
+      ],
+      "correct": 1,
+      "explanation": "AWS WAF(Web Application Firewall)는 SQL 인젝션 및 XSS 공격과 같은 일반적인 웹 익스플로잇으로부터 웹 애플리케이션을 보호합니다.",
+      "domain": "보안 및 규정 준수",
+      "difficulty": "기초",
+      "question_number": 17,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "서브넷으로 들어오고 나가는 트래픽을 제어하여 네트워크 수준 보안을 제공하는 AWS 서비스는 무엇입니까?",
+      "options": [
+        "보안 그룹",
+        "네트워크 액세스 제어 목록(NACL)",
+        "AWS WAF",
+        "AWS Shield"
+      ],
+      "correct": 1,
+      "explanation": "네트워크 ACL은 네트워크 수준에서 트래픽을 제어하여 서브넷 수준 보안을 제공하며, 보안 그룹은 인스턴스 수준에서 작동합니다.",
+      "domain": "보안 및 규정 준수",
+      "difficulty": "기초",
+      "question_number": 18,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "AWS 공동 책임 모델에서 고객의 애플리케이션과 AWS 서비스 간의 전송 중 데이터 암호화에 대한 책임은 누구에게 있습니까?",
+      "options": [
+        "AWS가 완전히 책임",
+        "고객이 완전히 책임",
+        "AWS와 고객이 공동 책임",
+        "제3자 인증 기관"
+      ],
+      "correct": 1,
+      "explanation": "고객은 전송 중 데이터 암호화에 대한 책임이 있으며, AWS는 암호화를 지원하는 도구와 인프라를 제공합니다.",
+      "domain": "보안 및 규정 준수",
+      "difficulty": "기초",
+      "question_number": 19,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "회사에서 AWS 사용량이 증가함에 따라 볼륨 할인을 받고 싶어합니다. 이러한 이점을 제공하는 요금 모델은 무엇입니까?",
+      "options": [
+        "계층형 요금이 포함된 사용한 만큼 지불",
+        "예약 인스턴스만",
+        "스팟 인스턴스만",
+        "전용 호스트만"
+      ],
+      "correct": 0,
+      "explanation": "AWS 사용한 만큼 지불 요금에는 많은 서비스에서 사용량이 증가함에 따라 볼륨 할인을 제공하는 계층형 요금이 포함됩니다.",
+      "domain": "청구 및 요금",
+      "difficulty": "기초",
+      "question_number": 20,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "회사에서 S3 데이터가 저장 시 암호화되도록 보장해야 합니다. 무엇을 활성화해야 합니까?",
+      "options": [
+        "S3 Transfer Acceleration",
+        "S3 서버 측 암호화",
+        "S3 교차 리전 복제",
+        "S3 수명 주기 정책"
+      ],
+      "correct": 1,
+      "explanation": "S3 서버 측 암호화는 저장된 데이터를 무단 액세스로부터 보호하여 저장 시 데이터를 암호화합니다.",
+      "domain": "보안 및 규정 준수",
+      "difficulty": "기초",
+      "question_number": 21,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "여러 고객이 동일한 물리적 인프라를 안전하게 공유할 수 있게 하는 클라우드 특성은 무엇입니까?",
+      "options": [
+        "신속한 탄력성",
+        "광범위한 네트워크 액세스",
+        "리소스 풀링",
+        "측정된 서비스"
+      ],
+      "correct": 2,
+      "explanation": "리소스 풀링은 보안과 격리를 유지하면서 여러 고객이 물리적 인프라를 공유할 수 있게 합니다.",
+      "domain": "클라우드 개념",
+      "difficulty": "기초",
+      "question_number": 22,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "회사에서 클라우드 서비스를 채택할 때 벤더 종속을 피하고 싶어합니다. 어떤 전략을 고려해야 합니까?",
+      "options": [
+        "독점 클라우드 서비스만 사용",
+        "멀티 클라우드 또는 오픈 표준 채택",
+        "가장 저렴한 공급자만 선택",
+        "클라우드 채택을 완전히 피함"
+      ],
+      "correct": 1,
+      "explanation": "멀티 클라우드 전략과 오픈 표준은 공급자를 전환할 수 있는 유연성을 유지하여 벤더 종속을 피하는 데 도움이 됩니다.",
+      "domain": "클라우드 개념",
+      "difficulty": "기초",
+      "question_number": 23,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "회사에서 AWS 계정에 대한 지출 알림과 예산을 설정하려고 합니다. 어떤 서비스를 사용해야 합니까?",
+      "options": [
+        "AWS Cost Explorer",
+        "AWS Budgets",
+        "AWS CloudTrail",
+        "Amazon CloudWatch"
+      ],
+      "correct": 1,
+      "explanation": "AWS Budgets를 사용하면 사용자 정의 비용 및 사용량 예산을 설정하고 임계값을 초과할 때 알림을 받을 수 있습니다.",
+      "domain": "청구 및 요금",
+      "difficulty": "기초",
+      "question_number": 24,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "회사에서 여러 AWS 계정에서 사용자 액세스를 중앙에서 관리하려고 합니다. 어떤 서비스를 사용해야 합니까?",
+      "options": [
+        "AWS IAM",
+        "SSO가 포함된 AWS Organizations",
+        "Amazon Cognito",
+        "AWS Directory Service"
+      ],
+      "correct": 1,
+      "explanation": "Single Sign-On(SSO)이 포함된 AWS Organizations는 여러 AWS 계정에서 중앙 집중식 액세스 관리를 제공합니다.",
+      "domain": "보안 및 규정 준수",
+      "difficulty": "기초",
+      "question_number": 25,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "회사에서 보안 규정 준수를 위해 데이터베이스 비밀번호를 자동으로 순환해야 합니다. 어떤 서비스가 도움이 될 수 있습니까?",
+      "options": [
+        "AWS Systems Manager Parameter Store",
+        "AWS Secrets Manager",
+        "AWS KMS",
+        "AWS Certificate Manager"
+      ],
+      "correct": 1,
+      "explanation": "AWS Secrets Manager는 보안 정책에 따라 데이터베이스 비밀번호 및 기타 비밀을 자동으로 순환할 수 있습니다.",
+      "domain": "보안 및 규정 준수",
+      "difficulty": "기초",
+      "question_number": 26,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "클라우드 환경에서 마이크로서비스 아키텍처의 주요 장점은 무엇입니까?",
+      "options": [
+        "필요한 서버 수 감소",
+        "구성 요소의 독립적인 확장 및 배포 가능",
+        "데이터베이스 필요성 제거",
+        "무중단 시간 보장"
+      ],
+      "correct": 1,
+      "explanation": "마이크로서비스는 각 구성 요소를 독립적으로 확장, 배포 및 유지 관리할 수 있게 하여 민첩성과 복원력을 향상시킵니다.",
+      "domain": "클라우드 개념",
+      "difficulty": "기초",
+      "question_number": 27,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "클라우드 마이그레이션을 위한 총 소유 비용(TCO)을 계산할 때 가장 중요한 요소는 무엇입니까?",
+      "options": [
+        "월별 클라우드 서비스 요금만",
+        "하드웨어 비용, 운영 비용 및 마이그레이션 비용",
+        "인터넷 대역폭 비용만",
+        "클라우드 스토리지 비용만"
+      ],
+      "correct": 1,
+      "explanation": "TCO에는 현재 하드웨어/운영 비용, 클라우드 서비스 비용, 마이그레이션 비용 및 지속적인 관리 등 모든 비용이 포함됩니다.",
+      "domain": "클라우드 개념",
+      "difficulty": "기초",
+      "question_number": 28,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "여러 EC2 인스턴스에 들어오는 트래픽을 자동으로 분산하는 서비스는 무엇입니까?",
+      "options": [
+        "Amazon Route 53",
+        "Amazon CloudFront",
+        "Elastic Load Balancing",
+        "AWS Auto Scaling"
+      ],
+      "correct": 2,
+      "explanation": "Elastic Load Balancing은 EC2 인스턴스와 같은 여러 대상에 들어오는 애플리케이션 트래픽을 자동으로 분산합니다.",
+      "domain": "기술",
+      "difficulty": "기초",
+      "question_number": 29,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "'클라우드 네이티브' 애플리케이션 설계가 주로 중점을 두는 것은 무엇입니까?",
+      "options": [
+        "변경 없이 레거시 애플리케이션 실행",
+        "하드웨어 활용률 최대화",
+        "클라우드 서비스 및 마이크로서비스 아키텍처 활용",
+        "인터넷 대역폭 사용량 최소화"
+      ],
+      "correct": 2,
+      "explanation": "클라우드 네이티브 설계는 확장성과 복원력을 위해 클라우드 서비스, 마이크로서비스, 컨테이너 및 DevOps 관행을 활용합니다.",
+      "domain": "클라우드 개념",
+      "difficulty": "기초",
+      "question_number": 30,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "스타트업이 마케팅 캠페인 중 갑작스러운 급증과 함께 예측할 수 없는 트래픽 패턴을 경험합니다. 이 시나리오에 가장 유익한 클라우드 특성은 무엇입니까?",
+      "options": [
+        "광범위한 네트워크 액세스",
+        "리소스 풀링",
+        "신속한 탄력성",
+        "측정된 서비스"
+      ],
+      "correct": 2,
+      "explanation": "신속한 탄력성은 트래픽 급증 시 자동 확장과 사용량이 적을 때 축소를 가능하게 합니다.",
+      "domain": "클라우드 개념",
+      "difficulty": "기초",
+      "question_number": 31,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "회사에서 애플리케이션 성능을 모니터링하고 비정상적인 동작에 대한 알림을 설정해야 합니다. 어떤 서비스를 사용해야 합니까?",
+      "options": [
+        "AWS CloudTrail",
+        "Amazon CloudWatch",
+        "AWS Config",
+        "Amazon Inspector"
+      ],
+      "correct": 1,
+      "explanation": "Amazon CloudWatch는 AWS 리소스 및 애플리케이션에 대한 모니터링, 메트릭, 로그 및 알림 기능을 제공합니다.",
+      "domain": "기술",
+      "difficulty": "기초",
+      "question_number": 32,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "모바일 애플리케이션에 AWS 리소스에 대한 임시 액세스를 제공하는 가장 안전한 방법은 무엇입니까?",
+      "options": [
+        "앱에 장기 액세스 키 포함",
+        "임시 자격 증명이 있는 IAM 역할 사용",
+        "루트 계정 자격 증명 공유",
+        "모든 사용자에게 동일한 비밀번호 사용"
+      ],
+      "correct": 1,
+      "explanation": "IAM 역할은 장기 액세스 키보다 더 안전한 임시적이고 제한된 권한의 자격 증명을 제공합니다.",
+      "domain": "보안 및 규정 준수",
+      "difficulty": "기초",
+      "question_number": 33,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "AWS 계정에서 위협과 악의적인 활동을 자동으로 탐지하는 AWS 서비스는 무엇입니까?",
+      "options": [
+        "AWS CloudTrail",
+        "Amazon GuardDuty",
+        "AWS Config",
+        "Amazon Inspector"
+      ],
+      "correct": 1,
+      "explanation": "Amazon GuardDuty는 기계 학습을 사용하여 AWS 계정에서 위협, 악의적인 활동 및 무단 행동을 탐지합니다.",
+      "domain": "보안 및 규정 준수",
+      "difficulty": "기초",
+      "question_number": 34,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "회사에서 웹 어디서나 모든 양의 데이터를 저장하고 검색해야 합니다. 가장 적합한 서비스는 무엇입니까?",
+      "options": [
+        "Amazon EBS",
+        "Amazon EFS",
+        "Amazon S3",
+        "Amazon FSx"
+      ],
+      "correct": 2,
+      "explanation": "Amazon S3는 높은 내구성과 가용성으로 웹 어디서나 모든 양의 데이터를 저장하고 검색하도록 설계되었습니다.",
+      "domain": "기술",
+      "difficulty": "기초",
+      "question_number": 35,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "상세한 청구 보고서와 비용 할당 태그를 제공하는 AWS 서비스는 무엇입니까?",
+      "options": [
+        "AWS 비용 및 사용량 보고서",
+        "Amazon CloudWatch",
+        "AWS CloudTrail",
+        "AWS Config"
+      ],
+      "correct": 0,
+      "explanation": "AWS 비용 및 사용량 보고서는 상세한 청구 데이터를 제공하고 상세한 비용 분석을 위한 비용 할당 태그를 지원합니다.",
+      "domain": "청구 및 요금",
+      "difficulty": "기초",
+      "question_number": 36,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "거의 액세스하지 않는 장기 보관 데이터에 대해 가장 낮은 비용을 제공하는 Amazon S3 스토리지 클래스는 무엇입니까?",
+      "options": [
+        "S3 Standard",
+        "S3 Standard-IA",
+        "S3 Glacier",
+        "S3 Glacier Deep Archive"
+      ],
+      "correct": 3,
+      "explanation": "S3 Glacier Deep Archive는 12시간 이상의 검색 시간으로 장기 보관 데이터에 대해 가장 낮은 비용의 스토리지를 제공합니다.",
+      "domain": "기술",
+      "difficulty": "기초",
+      "question_number": 37,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "회사에서 자동 백업 및 패치가 포함된 관리형 관계형 데이터베이스를 설정하려고 합니다. 어떤 서비스를 선택해야 합니까?",
+      "options": [
+        "자체 관리 데이터베이스가 있는 Amazon EC2",
+        "Amazon RDS",
+        "Amazon DynamoDB",
+        "Amazon Redshift"
+      ],
+      "correct": 1,
+      "explanation": "Amazon RDS는 자동 백업, 패치 및 유지 관리가 포함된 관리형 관계형 데이터베이스를 제공합니다.",
+      "domain": "기술",
+      "difficulty": "기초",
+      "question_number": 38,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "글로벌 회사에서 전 세계 사용자를 위해 웹 애플리케이션이 빠르게 로드되도록 보장하려고 합니다. 이 요구 사항을 해결하는 클라우드 이점은 무엇입니까?",
+      "options": [
+        "비용 최적화",
+        "글로벌 도달 범위 및 확장성",
+        "보안 강화",
+        "백업 자동화"
+      ],
+      "correct": 1,
+      "explanation": "클라우드 공급자는 더 나은 성능을 위해 애플리케이션이 근처 위치에서 사용자에게 서비스할 수 있게 하는 글로벌 인프라를 제공합니다.",
+      "domain": "클라우드 개념",
+      "difficulty": "기초",
+      "question_number": 39,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "제조 회사에서 ERP 시스템을 클라우드로 마이그레이션하려고 하지만 규제 요구 사항으로 인해 일부 데이터를 온프레미스에 유지해야 합니다. 이 시나리오에 가장 적합한 클라우드 배포 모델은 무엇입니까?",
+      "options": [
+        "퍼블릭 클라우드만",
+        "프라이빗 클라우드만",
+        "하이브리드 클라우드",
+        "커뮤니티 클라우드"
+      ],
+      "correct": 2,
+      "explanation": "하이브리드 클라우드는 회사가 규제된 데이터를 온프레미스에 유지하면서 다른 워크로드에 대해서는 클라우드 이점을 활용할 수 있게 합니다.",
+      "domain": "클라우드 개념",
+      "difficulty": "기초",
+      "question_number": 40,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "회사에서 데이터 주권에 대해 우려하고 있으며 데이터가 자국 내에 머물도록 보장하려고 합니다. 무엇을 고려해야 합니까?",
+      "options": [
+        "비용 절약을 위해 모든 클라우드 리전 사용",
+        "자국 경계 내의 클라우드 리전 선택",
+        "클라우드 컴퓨팅을 완전히 피함",
+        "프리 티어 서비스만 사용"
+      ],
+      "correct": 1,
+      "explanation": "자국 경계 내의 클라우드 리전을 선택하면 데이터 주권 요구 사항을 준수하는 데 도움이 됩니다.",
+      "domain": "클라우드 개념",
+      "difficulty": "기초",
+      "question_number": 41,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "스트리밍 데이터를 위한 관리형 Apache Kafka 서비스를 제공하는 AWS 서비스는 무엇입니까?",
+      "options": [
+        "Amazon Kinesis",
+        "Amazon MSK (Managed Streaming for Kafka)",
+        "Amazon SQS",
+        "Amazon SNS"
+      ],
+      "correct": 1,
+      "explanation": "Amazon MSK(Managed Streaming for Apache Kafka)는 완전 관리형 Apache Kafka 서비스를 제공합니다.",
+      "domain": "기술",
+      "difficulty": "기초",
+      "question_number": 42,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "AWS 리소스 구성을 지속적으로 모니터링하고 기록하여 규정 준수를 보장하는 데 도움이 되는 AWS 서비스는 무엇입니까?",
+      "options": [
+        "AWS CloudTrail",
+        "AWS Config",
+        "Amazon CloudWatch",
+        "AWS Systems Manager"
+      ],
+      "correct": 1,
+      "explanation": "AWS Config는 규정 준수 평가를 위해 AWS 리소스 구성과 변경 사항을 지속적으로 모니터링하고 기록합니다.",
+      "domain": "보안 및 규정 준수",
+      "difficulty": "기초",
+      "question_number": 43,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "회사에서 기본 인프라를 관리하지 않고 컨테이너화된 애플리케이션을 배포하려고 합니다. 가장 적합한 서비스는 무엇입니까?",
+      "options": [
+        "Amazon EC2",
+        "AWS Lambda",
+        "Fargate가 포함된 Amazon ECS",
+        "AWS Batch"
+      ],
+      "correct": 2,
+      "explanation": "Fargate가 포함된 Amazon ECS를 사용하면 기본 EC2 인스턴스를 관리하지 않고도 컨테이너를 실행할 수 있습니다.",
+      "domain": "기술",
+      "difficulty": "기초",
+      "question_number": 44,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "클라우드에서 격리된 가상 네트워크를 생성할 수 있게 하는 AWS 서비스는 무엇입니까?",
+      "options": [
+        "Amazon Route 53",
+        "Amazon VPC",
+        "AWS Direct Connect",
+        "Amazon API Gateway"
+      ],
+      "correct": 1,
+      "explanation": "Amazon VPC(Virtual Private Cloud)를 사용하면 네트워크 환경을 완전히 제어하여 격리된 가상 네트워크를 생성할 수 있습니다.",
+      "domain": "기술",
+      "difficulty": "기초",
+      "question_number": 45,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "회사에서 규정 준수 감사를 위해 AWS 계정에 대한 모든 API 호출을 추적해야 합니다. 어떤 서비스를 사용해야 합니까?",
+      "options": [
+        "Amazon CloudWatch",
+        "AWS CloudTrail",
+        "AWS Config",
+        "Amazon Inspector"
+      ],
+      "correct": 1,
+      "explanation": "AWS CloudTrail은 보안 및 규정 준수 감사를 위해 AWS 서비스에 대한 모든 API 호출의 상세한 로그를 제공합니다.",
+      "domain": "보안 및 규정 준수",
+      "difficulty": "기초",
+      "question_number": 46,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "AWS Shield Standard가 기본적으로 보호하는 공격 유형은 무엇입니까?",
+      "options": [
+        "SQL 인젝션 공격",
+        "분산 서비스 거부(DDoS) 공격",
+        "중간자 공격",
+        "사회 공학 공격"
+      ],
+      "correct": 1,
+      "explanation": "AWS Shield Standard는 모든 AWS 고객에게 추가 비용 없이 일반적인 DDoS 공격에 대한 자동 보호를 제공합니다.",
+      "domain": "보안 및 규정 준수",
+      "difficulty": "기초",
+      "question_number": 47,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "회사에서 비즈니스 인텔리전스를 위해 대량의 구조화된 데이터를 분석해야 합니다. 가장 적합한 서비스는 무엇입니까?",
+      "options": [
+        "Amazon RDS",
+        "Amazon DynamoDB",
+        "Amazon Redshift",
+        "Amazon ElastiCache"
+      ],
+      "correct": 2,
+      "explanation": "Amazon Redshift는 BI 도구를 사용하여 대량의 구조화된 데이터를 분석하는 데 최적화된 데이터 웨어하우스 서비스입니다.",
+      "domain": "기술",
+      "difficulty": "기초",
+      "question_number": 48,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "회사에서 기존 서버를 업그레이드하는 대신 더 많은 서버를 추가하여 증가된 부하를 처리할 수 있도록 애플리케이션을 보장해야 합니다. 이것은 어떤 유형의 확장입니까?",
+      "options": [
+        "수직 확장",
+        "수평 확장",
+        "대각선 확장",
+        "원형 확장"
+      ],
+      "correct": 1,
+      "explanation": "수평 확장은 증가된 부하를 처리하기 위해 더 많은 인스턴스/서버를 추가하는 것이고, 수직 확장은 기존 서버의 성능을 증가시키는 것입니다.",
+      "domain": "클라우드 개념",
+      "difficulty": "기초",
+      "question_number": 49,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    },
+    {
+      "question": "AWS 보안에서 최소 권한 원칙이란 무엇입니까?",
+      "options": [
+        "문제를 피하기 위해 사용자에게 최대 권한 부여",
+        "작업에 필요한 최소 권한만 부여",
+        "모든 사용자가 동일한 권한을 가져야 함",
+        "루트 사용자만 권한을 가져야 함"
+      ],
+      "correct": 1,
+      "explanation": "최소 권한은 사용자에게 특정 업무 기능을 수행하는 데 필요한 최소한의 권한만 부여하는 것을 의미합니다.",
+      "domain": "보안 및 규정 준수",
+      "difficulty": "기초",
+      "question_number": 50,
+      "source": "최종 버전 - 중복 없음, 고급 시나리오"
+    }
+  ]
+}
