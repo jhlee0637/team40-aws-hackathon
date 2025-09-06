@@ -3,189 +3,631 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AWS 서티 RPG</title>
+    <title>AWS 퀴즈 RPG - 테스트</title>
     <style>
-        * {
+        body {
+            background: url('assets/images/background.jpg') center/cover no-repeat, 
+                        linear-gradient(135deg, #87CEEB 0%, #98D8E8 100%);
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
-        }
-        
-        body {
-            background: url('assets/images/background.jpg') center/cover no-repeat;
-            font-family: 'Courier New', monospace;
-            overflow: hidden;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            font-family: 'Courier New', monospace;
         }
         
         #gameContainer {
-            position: relative;
+            width: 800px;
+            height: 600px;
             border: 2px solid #34495e;
             border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
             background: rgba(255,255,255,0.1);
             backdrop-filter: blur(10px);
+            position: relative;
+            overflow: hidden;
         }
         
         #gameCanvas {
-            display: block;
-            image-rendering: pixelated;
-            image-rendering: -moz-crisp-edges;
-            image-rendering: crisp-edges;
+            width: 100%;
+            height: 100%;
             background: transparent;
+            image-rendering: pixelated;
         }
         
         #ui {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
+            top: 10px;
+            left: 10px;
+            background: rgba(0,0,0,0.8);
+            color: white;
+            padding: 10px;
+            border-radius: 4px;
+            font-size: 14px;
             z-index: 100;
         }
         
-        .ui-panel {
+        #stageInfo {
             position: absolute;
+            top: 10px;
+            right: 10px;
             background: rgba(0,0,0,0.8);
-            border: 2px solid #fff;
-            border-radius: 4px;
+            color: white;
             padding: 10px;
-            color: #fff;
+            border-radius: 4px;
             font-size: 14px;
-            pointer-events: auto;
+            z-index: 100;
         }
         
-        #playerStats {
-            top: 10px;
-            left: 10px;
-            min-width: 200px;
+        #hpBar {
+            width: 200px;
+            height: 20px;
+            background: rgba(255,0,0,0.3);
+            border: 2px solid #fff;
+            border-radius: 10px;
+            margin-top: 5px;
+            overflow: hidden;
+        }
+        
+        #hpFill {
+            height: 100%;
+            background: linear-gradient(90deg, #ff0000, #ffff00, #00ff00);
+            transition: width 0.3s;
         }
         
         #battleUI {
-            bottom: 10px;
+            position: absolute;
+            top: 50%;
             left: 50%;
-            transform: translateX(-50%);
-            width: 80%;
-            max-width: 600px;
+            transform: translate(-50%, -50%);
+            background: rgba(0,0,0,0.9);
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
             display: none;
-        }
-        
-        .battle-question {
-            margin-bottom: 15px;
-            font-size: 16px;
-            line-height: 1.4;
+            max-width: 500px;
         }
         
         .battle-options {
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 10px;
+            margin-top: 15px;
         }
         
         .battle-option {
             padding: 10px;
             background: #3498db;
             border: none;
-            border-radius: 4px;
+            border-radius: 5px;
             color: white;
             cursor: pointer;
-            font-size: 14px;
-            transition: background 0.2s;
         }
         
         .battle-option:hover {
             background: #2980b9;
-        }
-        
-        .battle-option.correct {
-            background: #27ae60;
-        }
-        
-        .battle-option.incorrect {
-            background: #e74c3c;
-        }
-        
-        #loadingScreen {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            z-index: 1000;
-        }
-        
-        .game-title {
-            font-size: 32px;
-            font-weight: bold;
-            margin-bottom: 10px;
-            text-shadow: 2px 2px 4px rgba(0,0,0,0.5);
-        }
-        
-        .game-subtitle {
-            font-size: 16px;
-            margin-bottom: 30px;
-            text-align: center;
-            opacity: 0.9;
-        }
-        
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 4px solid #34495e;
-            border-top: 4px solid #3498db;
-            border-radius: 50%;
-            animation: spin 1s linear infinite;
-            margin-bottom: 20px;
-        }
-        
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
         }
     </style>
 </head>
 <body>
     <div id="gameContainer">
         <canvas id="gameCanvas" width="800" height="600"></canvas>
-        
         <div id="ui">
-            <div id="playerStats" class="ui-panel">
-                <div>레벨: <span id="playerLevel">1</span></div>
-                <div>경험치: <span id="playerExp">0</span>/<span id="playerMaxExp">100</span></div>
-                <div>AWS 크레딧: <span id="playerCredits">0</span></div>
+            <div>레벨: <span id="playerLevel">1</span></div>
+            <div>칭호: <span id="playerTitle">Foundational</span></div>
+            <div>경험치: <span id="playerExp">0</span>/<span id="playerMaxExp">100</span></div>
+            <div>AWS 크레딧: <span id="playerCredits">0</span></div>
+            <div>HP: <span id="hpText">100/100</span></div>
+            <div id="hpBar">
+                <div id="hpFill" style="width: 100%;"></div>
             </div>
-            
-            <div id="battleUI" class="ui-panel">
-                <div class="battle-question" id="battleQuestion"></div>
-                <div class="battle-options" id="battleOptions"></div>
-            </div>
+            <div style="margin-top: 10px;">조작: A/D(이동), Space(점프)</div>
         </div>
         
-        <div id="loadingScreen">
-            <div class="game-title">☁️ AWS 퀴즈 RPG</div>
-            <div class="game-subtitle">
-                AWS 자격증 학습을 위한 인터랙티브 퀴즈 게임<br>
-                노들섬에서 AWS 서비스들과 퀴즈 배틀로 실력 향상
-            </div>
-            <div class="loading-spinner"></div>
-            <div id="loadingProgress">게임 로딩 중...</div>
-            <div style="margin-top: 20px; font-size: 14px; opacity: 0.8;">
-                조작법: A/D(좌우이동), Space(점프), AWS 서비스 몬스터와 충돌 시 퀴즈 시작
-            </div>
+        <div id="stageInfo">
+            <div id="stageName">CLF 기초 스테이지</div>
+            <div>난이도: <span id="stageDifficulty">CLF</span></div>
+            <div>오른쪽 끝으로 가면 다음 스테이지</div>
+        </div>
+        
+        <div id="battleUI">
+            <div id="battleQuestion"></div>
+            <div class="battle-options" id="battleOptions"></div>
         </div>
     </div>
     
-    <script type="module" src="src/main.js"></script>
+    <script>
+        const canvas = document.getElementById('gameCanvas');
+        const ctx = canvas.getContext('2d');
+        
+        // 게임 상태
+        const game = {
+            player: {
+                x: 100,
+                y: 400,
+                width: 32,
+                height: 32,
+                velocityY: 0,
+                onGround: false,
+                speed: 3,
+                jumpPower: -12,
+                gravity: 0.5,
+                hp: 100,
+                maxHp: 100,
+                level: 1,
+                exp: 0,
+                maxExp: 100,
+                credits: 0,
+                title: "Foundational"
+            },
+            currentStage: 0,
+            cameraX: 0,
+            stages: [
+                {
+                    name: "초급 스테이지 (CLF)",
+                    difficulty: "CLF",
+                    monsters: [
+                        { x: 250, y: 418, width: 32, height: 32, name: "Amazon EC2", direction: 1, speed: 0.3, difficulty: "CLF", velocityY: 0, onGround: false, gravity: 0.5 },
+                        { x: 450, y: 518, width: 32, height: 32, name: "Amazon S3", direction: -1, speed: 0.2, difficulty: "CLF", velocityY: 0, onGround: false, gravity: 0.5 },
+                        { x: 350, y: 318, width: 32, height: 32, name: "AWS Lambda", direction: 1, speed: 0.25, difficulty: "CLF", velocityY: 0, onGround: false, gravity: 0.5 },
+                        { x: 180, y: 268, width: 32, height: 32, name: "매직 위저드", direction: -1, speed: 0.4, difficulty: "RANDOM", velocityY: 0, onGround: false, gravity: 0.5, isMagic: true }
+                    ],
+                    platforms: [
+                        { x: 200, y: 450, width: 120, height: 15 },
+                        { x: 350, y: 350, width: 120, height: 15 },
+                        { x: 150, y: 300, width: 80, height: 15 },
+                        { x: 500, y: 400, width: 100, height: 15 }
+                    ]
+                },
+                {
+                    name: "중급 스테이지 (SAA)",
+                    difficulty: "SAA",
+                    monsters: [
+                        { x: 1050, y: 418, width: 32, height: 32, name: "Amazon VPC", direction: 1, speed: 0.4, difficulty: "SAA", velocityY: 0, onGround: false, gravity: 0.5 },
+                        { x: 1250, y: 518, width: 32, height: 32, name: "Elastic Load Balancer", direction: -1, speed: 0.35, difficulty: "SAA", velocityY: 0, onGround: false, gravity: 0.5 },
+                        { x: 1450, y: 318, width: 32, height: 32, name: "Amazon RDS", direction: 1, speed: 0.3, difficulty: "SAA", velocityY: 0, onGround: false, gravity: 0.5 },
+                        { x: 1350, y: 218, width: 32, height: 32, name: "매직 위저드", direction: 1, speed: 0.5, difficulty: "RANDOM", velocityY: 0, onGround: false, gravity: 0.5, isMagic: true }
+                    ],
+                    platforms: [
+                        { x: 1000, y: 450, width: 120, height: 15 },
+                        { x: 1200, y: 350, width: 120, height: 15 },
+                        { x: 1400, y: 350, width: 120, height: 15 },
+                        { x: 1100, y: 300, width: 100, height: 15 }
+                    ]
+                },
+                {
+                    name: "고급 스테이지 (SAP)",
+                    difficulty: "SAP",
+                    monsters: [
+                        { x: 1850, y: 418, width: 32, height: 32, name: "AWS Organizations", direction: 1, speed: 0.5, difficulty: "SAP", velocityY: 0, onGround: false, gravity: 0.5 },
+                        { x: 2050, y: 318, width: 32, height: 32, name: "AWS Control Tower", direction: -1, speed: 0.45, difficulty: "SAP", velocityY: 0, onGround: false, gravity: 0.5 },
+                        { x: 2150, y: 168, width: 32, height: 32, name: "매직 위저드", direction: 1, speed: 0.6, difficulty: "RANDOM", velocityY: 0, onGround: false, gravity: 0.5, isMagic: true }
+                    ],
+                    platforms: [
+                        { x: 1800, y: 450, width: 120, height: 15 },
+                        { x: 2000, y: 350, width: 120, height: 15 },
+                        { x: 1900, y: 250, width: 100, height: 15 }
+                    ]
+                },
+                {
+                    name: "최종 보스 스테이지",
+                    difficulty: "BOSS",
+                    monsters: [
+                        { x: 2850, y: 418, width: 32, height: 32, name: "AWS 마스터 드래곤", direction: -1, speed: 0.8, difficulty: "ALL", velocityY: 0, onGround: false, gravity: 0.5, isBoss: true }
+                    ],
+                    platforms: [
+                        { x: 2800, y: 450, width: 200, height: 15 },
+                        { x: 2900, y: 350, width: 150, height: 15 }
+                    ]
+                }
+            ],
+            worldWidth: 3200,
+            groundY: 550,
+            keys: {},
+            playerImg: null,
+            clfImg: null,
+            saaImg: null,
+            sapImg: null,
+            dragonImg: null,
+            magicImg: null,
+            gameState: 'playing',
+            currentBattle: null,
+            quizData: {
+                ALL: [
+                    {
+                        question: "AWS 클라우드의 6가지 장점 중 하나가 아닌 것은?",
+                        options: ["민첩성 향상", "비용 절감", "데이터 소유권 보장", "글로벌 확장"],
+                        correct: 2
+                    }
+                ],
+                CLF: [
+                    {
+                        question: "AWS의 컴퓨팅 서비스는 무엇입니까?",
+                        options: ["EC2", "S3", "RDS", "CloudFront"],
+                        correct: 0
+                    }
+                ],
+                SAA: [
+                    {
+                        question: "Multi-AZ RDS 배포의 주요 목적은?",
+                        options: ["성능 향상", "고가용성", "비용 절감", "보안 강화"],
+                        correct: 1
+                    }
+                ],
+                SAP: [
+                    {
+                        question: "AWS Organizations의 주요 기능은?",
+                        options: ["비용 관리", "계정 통합 관리", "보안 강화", "성능 최적화"],
+                        correct: 1
+                    }
+                ]
+            }
+        };
+        
+        // 이미지 로드
+        game.playerImg = new Image();
+        game.playerImg.src = 'assets/images/Cha.PNG';
+        
+        game.clfImg = new Image();
+        game.clfImg.src = 'assets/images/CLF.PNG';
+        
+        game.saaImg = new Image();
+        game.saaImg.src = 'assets/images/SAA.PNG';
+        
+        game.sapImg = new Image();
+        game.sapImg.src = 'assets/images/SAP.PNG';
+        
+        game.dragonImg = new Image();
+        game.dragonImg.src = 'assets/images/dragon.PNG';
+        
+        game.magicImg = new Image();
+        game.magicImg.src = 'assets/images/Magic.PNG';
+        
+        // 키 입력
+        document.addEventListener('keydown', (e) => {
+            game.keys[e.code] = true;
+        });
+        
+        document.addEventListener('keyup', (e) => {
+            game.keys[e.code] = false;
+        });
+        
+        // 칭호 업데이트 함수
+        function updateTitle() {
+            const titles = ["Foundational", "Associate", "Professional", "Specialty"];
+            const titleIndex = Math.min(Math.floor(game.player.level / 5), 3);
+            game.player.title = titles[titleIndex];
+            document.getElementById('playerTitle').textContent = game.player.title;
+        }
+        
+        // 레벨업 체크
+        function checkLevelUp() {
+            while (game.player.exp >= game.player.maxExp) {
+                game.player.exp -= game.player.maxExp;
+                game.player.level++;
+                game.player.maxExp = Math.floor(game.player.maxExp * 1.2);
+                updateTitle();
+                updateUI();
+            }
+        }
+        
+        // UI 업데이트
+        function updateUI() {
+            document.getElementById('playerLevel').textContent = game.player.level;
+            document.getElementById('playerTitle').textContent = game.player.title;
+            document.getElementById('playerExp').textContent = game.player.exp;
+            document.getElementById('playerMaxExp').textContent = game.player.maxExp;
+            document.getElementById('playerCredits').textContent = game.player.credits;
+        }
+        
+        // 플레이어 그리기
+        function drawPlayer() {
+            const p = game.player;
+            
+            if (game.playerImg.complete) {
+                ctx.drawImage(game.playerImg, p.x, p.y, p.width, p.height);
+            } else {
+                ctx.fillStyle = '#27ae60';
+                ctx.fillRect(p.x + 8, p.y + 8, 16, 20);
+                ctx.fillStyle = '#f4c2a1';
+                ctx.fillRect(p.x + 10, p.y + 4, 12, 12);
+                ctx.fillStyle = '#000';
+                ctx.fillRect(p.x + 12, p.y + 8, 2, 2);
+                ctx.fillRect(p.x + 18, p.y + 8, 2, 2);
+            }
+        }
+        
+        // 몬스터 그리기
+        function drawMonsters() {
+            game.stages.forEach(stage => {
+                stage.monsters.forEach(monster => {
+                    let img = null;
+                    
+                    if (monster.isBoss && game.dragonImg.complete) {
+                        img = game.dragonImg;
+                    } else if (monster.isMagic && game.magicImg.complete) {
+                        img = game.magicImg;
+                    } else {
+                        if (monster.difficulty === 'CLF' && game.clfImg.complete) {
+                            img = game.clfImg;
+                        } else if (monster.difficulty === 'SAA' && game.saaImg.complete) {
+                            img = game.saaImg;
+                        } else if (monster.difficulty === 'SAP' && game.sapImg.complete) {
+                            img = game.sapImg;
+                        }
+                    }
+                    
+                    if (img) {
+                        ctx.drawImage(img, monster.x, monster.y, monster.width, monster.height);
+                    } else {
+                        let color = '#e74c3c';
+                        if (monster.difficulty === 'CLF') color = '#27ae60';
+                        else if (monster.difficulty === 'SAA') color = '#f39c12';
+                        else if (monster.difficulty === 'SAP') color = '#8e44ad';
+                        else if (monster.isMagic) color = '#9b59b6';
+                        
+                        ctx.fillStyle = color;
+                        ctx.fillRect(monster.x, monster.y, monster.width, monster.height);
+                    }
+                    
+                    ctx.fillStyle = '#fff';
+                    ctx.font = '10px Arial';
+                    ctx.fillText(monster.name, monster.x, monster.y - 5);
+                });
+            });
+        }
+        
+        // 게임 업데이트
+        function update() {
+            if (game.gameState === 'playing') {
+                updatePlayer();
+                updateMonsters();
+                checkCollisions();
+            }
+        }
+        
+        function updatePlayer() {
+            const p = game.player;
+            
+            if (game.keys['KeyA'] || game.keys['ArrowLeft']) {
+                p.x -= p.speed;
+            }
+            if (game.keys['KeyD'] || game.keys['ArrowRight']) {
+                p.x += p.speed;
+            }
+            
+            if ((game.keys['Space'] || game.keys['ArrowUp']) && p.onGround) {
+                p.velocityY = p.jumpPower;
+                p.onGround = false;
+            }
+            
+            p.velocityY += p.gravity;
+            p.y += p.velocityY;
+            
+            p.onGround = false;
+            const currentStage = game.stages[game.currentStage];
+            for (const platform of currentStage.platforms) {
+                if (p.x < platform.x + platform.width &&
+                    p.x + p.width > platform.x &&
+                    p.y + p.height > platform.y &&
+                    p.y + p.height < platform.y + platform.height + 10 &&
+                    p.velocityY >= 0) {
+                    p.y = platform.y - p.height;
+                    p.velocityY = 0;
+                    p.onGround = true;
+                }
+            }
+            
+            if (p.y + p.height >= game.groundY) {
+                p.y = game.groundY - p.height;
+                p.velocityY = 0;
+                p.onGround = true;
+            }
+            
+            const stageEnd = (game.currentStage + 1) * 800 - 50;
+            if (p.x > stageEnd && game.currentStage < game.stages.length - 1) {
+                game.currentStage++;
+                p.x = game.currentStage * 800 + 50;
+                updateStageInfo();
+            }
+            
+            const stageStart = game.currentStage * 800 + 50;
+            if (p.x < stageStart && game.currentStage > 0) {
+                game.currentStage--;
+                p.x = (game.currentStage + 1) * 800 - 50;
+                updateStageInfo();
+            }
+            
+            p.x = Math.max(0, Math.min(game.worldWidth - p.width, p.x));
+            game.cameraX = Math.max(0, Math.min(p.x - 400, game.worldWidth - 800));
+        }
+        
+        function updateMonsters() {
+            const currentStage = game.stages[game.currentStage];
+            currentStage.monsters.forEach(monster => {
+                monster.velocityY += monster.gravity;
+                monster.y += monster.velocityY;
+                
+                monster.onGround = false;
+                for (const platform of currentStage.platforms) {
+                    if (monster.x < platform.x + platform.width &&
+                        monster.x + monster.width > platform.x &&
+                        monster.y + monster.height > platform.y &&
+                        monster.y + monster.height < platform.y + platform.height + 10 &&
+                        monster.velocityY >= 0) {
+                        monster.y = platform.y - monster.height;
+                        monster.velocityY = 0;
+                        monster.onGround = true;
+                    }
+                }
+                
+                if (monster.y + monster.height >= game.groundY) {
+                    monster.y = game.groundY - monster.height;
+                    monster.velocityY = 0;
+                    monster.onGround = true;
+                }
+                
+                if (monster.onGround) {
+                    monster.x += monster.direction * monster.speed;
+                }
+                
+                const stageStart = game.currentStage * 800;
+                const stageEnd = (game.currentStage + 1) * 800;
+                if (monster.x <= stageStart || monster.x >= stageEnd - monster.width) {
+                    monster.direction *= -1;
+                }
+            });
+        }
+        
+        function checkCollisions() {
+            const p = game.player;
+            const currentStage = game.stages[game.currentStage];
+            
+            currentStage.monsters.forEach(monster => {
+                if (p.x < monster.x + monster.width &&
+                    p.x + p.width > monster.x &&
+                    p.y < monster.y + monster.height &&
+                    p.y + p.height > monster.y) {
+                    startBattle(monster);
+                }
+            });
+        }
+        
+        function render() {
+            ctx.clearRect(0, 0, 800, 600);
+            
+            ctx.save();
+            ctx.translate(-game.cameraX, 0);
+            
+            ctx.fillStyle = 'rgba(144, 238, 144, 0.3)';
+            ctx.fillRect(0, game.groundY, game.worldWidth, 600 - game.groundY);
+            
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)';
+            ctx.lineWidth = 2;
+            for (let i = 1; i < game.stages.length; i++) {
+                ctx.beginPath();
+                ctx.moveTo(i * 800, 0);
+                ctx.lineTo(i * 800, 600);
+                ctx.stroke();
+            }
+            
+            ctx.fillStyle = 'rgba(139, 69, 19, 0.8)';
+            game.stages.forEach(stage => {
+                stage.platforms.forEach(platform => {
+                    ctx.fillRect(platform.x, platform.y, platform.width, platform.height);
+                });
+            });
+            
+            drawMonsters();
+            drawPlayer();
+            
+            ctx.restore();
+            
+            updateHPBar();
+        }
+        
+        function updateHPBar() {
+            const hpPercent = (game.player.hp / game.player.maxHp) * 100;
+            document.getElementById('hpFill').style.width = hpPercent + '%';
+            document.getElementById('hpText').textContent = game.player.hp + '/' + game.player.maxHp;
+        }
+        
+        function gameLoop() {
+            update();
+            render();
+            requestAnimationFrame(gameLoop);
+        }
+        
+        function startBattle(monster) {
+            if (game.gameState === 'battle') return;
+            
+            game.gameState = 'battle';
+            let difficulty = monster.difficulty;
+            let questions;
+            
+            if (monster.isMagic) {
+                const allDifficulties = ['CLF', 'SAA', 'SAP'];
+                difficulty = allDifficulties[Math.floor(Math.random() * allDifficulties.length)];
+                questions = game.quizData[difficulty];
+            } else if (monster.isBoss) {
+                questions = game.quizData['ALL'];
+            } else {
+                questions = game.quizData[difficulty];
+            }
+            
+            game.currentBattle = {
+                monster: monster,
+                question: questions[Math.floor(Math.random() * questions.length)],
+                difficulty: difficulty
+            };
+            
+            showBattleUI();
+        }
+        
+        function showBattleUI() {
+            const battleUI = document.getElementById('battleUI');
+            const battle = game.currentBattle;
+            const question = battle.question;
+            
+            document.getElementById('battleQuestion').innerHTML = `
+                <div style="margin-bottom: 10px;">
+                    <strong>[${battle.difficulty}] ${battle.monster.name}</strong>와의 배틀!
+                </div>
+                <div>${question.question}</div>
+            `;
+            
+            const optionsContainer = document.getElementById('battleOptions');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'battle-option';
+                button.textContent = option;
+                button.onclick = () => selectAnswer(index);
+                optionsContainer.appendChild(button);
+            });
+            
+            battleUI.style.display = 'block';
+        }
+        
+        function selectAnswer(selectedIndex) {
+            const question = game.currentBattle.question;
+            const isCorrect = selectedIndex === question.correct;
+            
+            if (isCorrect) {
+                game.player.exp += 25;
+                game.player.credits += 50;
+                checkLevelUp();
+            } else {
+                game.player.hp = Math.max(0, game.player.hp - 20);
+                if (game.player.hp <= 0) {
+                    alert('게임 오버! HP가 0이 되었습니다.');
+                    location.reload();
+                    return;
+                }
+            }
+            
+            setTimeout(() => {
+                endBattle();
+            }, 1000);
+        }
+        
+        function endBattle() {
+            document.getElementById('battleUI').style.display = 'none';
+            game.gameState = 'playing';
+            game.currentBattle = null;
+        }
+        
+        function updateStageInfo() {
+            const currentStage = game.stages[game.currentStage];
+            document.getElementById('stageName').textContent = currentStage.name;
+            document.getElementById('stageDifficulty').textContent = currentStage.difficulty;
+        }
+        
+        // 게임 시작
+        updateUI();
+        updateStageInfo();
+        gameLoop();
+    </script>
 </body>
 </html>
