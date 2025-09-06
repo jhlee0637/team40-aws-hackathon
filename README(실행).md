@@ -70,7 +70,21 @@ hackthon_Q/
 
 ## 🚀 실행 방법
 
-1. **로컬 서버 실행** (권장):
+### 🎯 원클릭 실행 (권장)
+
+**PowerShell (Windows):**
+```powershell
+.\start-game.ps1
+```
+
+**Bash (Linux/Mac):**
+```bash
+./start-game.sh
+```
+
+### 🛠 수동 실행
+
+1. **로컬 서버 실행**:
    ```bash
    # Python 3
    python -m http.server 8000
