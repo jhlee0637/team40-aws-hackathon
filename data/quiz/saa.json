@@ -1,0 +1,18 @@
+[
+    {
+        "question": "Multi-AZ RDS 배포의 주요 목적은?",
+        "options": ["성능 향상", "고가용성", "비용 절감", "보안 강화"],
+        "correct": 1,
+        "explanation": "Multi-AZ는 고가용성과 자동 장애 조치를 제공합니다.",
+        "difficulty": 2,
+        "certInfo": "AWS Certified Solutions Architect Associate (SAA-C03)는 AWS에서 확장 가능하고 안정적인 시스템을 설계하는 능력을 검증합니다."
+    },
+    {
+        "question": "ELB의 종류가 아닌 것은?",
+        "options": ["Application Load Balancer", "Network Load Balancer", "Classic Load Balancer", "Database Load Balancer"],
+        "correct": 3,
+        "explanation": "Database Load Balancer는 존재하지 않습니다.",
+        "difficulty": 2,
+        "certInfo": "ELB는 트래픽을 여러 대상에 자동으로 분산하여 애플리케이션의 가용성을 높입니다."
+    }
+]

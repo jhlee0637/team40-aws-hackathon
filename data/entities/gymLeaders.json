@@ -1,0 +1,66 @@
+[
+    {
+        "x": 16, "y": 30,
+        "name": "박클라우드",
+        "title": "CP 관장",
+        "cert": "cp", "zone": "beginner",
+        "defeated": false,
+        "sprite": "cp_leader",
+        "badge": "Foundation Badge",
+        "dialogue": [
+            "안녕하세요! 노들섬 AWS 클라우드 프랙티셔너 관장 박클라우드입니다.",
+            "클라우드의 기초 개념부터 차근차근 배워보시죠!",
+            "AWS의 기본 서비스들을 마스터할 준비가 되셨나요?"
+        ],
+        "battleIntro": "클라우드의 기초를 보여드리겠습니다!",
+        "victory": "훌륭합니다! Foundation Badge를 드립니다!",
+        "defeat": "더 공부하고 다시 도전하세요!",
+        "certDetails": {
+            "fullName": "AWS Certified Cloud Practitioner",
+            "code": "CLF-C01",
+            "duration": "90분",
+            "questions": "65문항",
+            "passingScore": "700/1000점",
+            "cost": "$100",
+            "validity": "3년",
+            "domains": [
+                "클라우드 개념 (26%)",
+                "보안 및 규정 준수 (25%)",
+                "기술 (33%)",
+                "청구 및 요금 (16%)"
+            ]
+        }
+    },
+    {
+        "x": 36, "y": 25,
+        "name": "김아키텍트",
+        "title": "SAA 관장",
+        "cert": "saa", "zone": "forest",
+        "defeated": false,
+        "sprite": "saa_leader",
+        "badge": "Architect Badge",
+        "dialogue": [
+            "솔루션 아키텍트 관장 김아키텍트입니다.",
+            "확장 가능하고 안정적인 아키텍처 설계의 세계로 오신 것을 환영합니다!",
+            "고가용성과 내결함성에 대해 알아볼까요?"
+        ],
+        "battleIntro": "진정한 아키텍처의 힘을 보여드리겠습니다!",
+        "victory": "놀랍습니다! Architect Badge를 획득하셨습니다!",
+        "defeat": "아키텍처는 더 깊이 있는 이해가 필요합니다.",
+        "certDetails": {
+            "fullName": "AWS Certified Solutions Architect Associate",
+            "code": "SAA-C03",
+            "duration": "130분",
+            "questions": "65문항",
+            "passingScore": "720/1000점",
+            "cost": "$150",
+            "validity": "3년",
+            "domains": [
+                "보안 아키텍처 설계 (30%)",
+                "복원력 있는 아키텍처 설계 (26%)",
+                "고성능 아키텍처 설계 (24%)",
+                "비용 최적화 아키텍처 설계 (20%)"
+            ]
+        }
+    }
+]

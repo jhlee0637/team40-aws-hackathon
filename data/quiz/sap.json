@@ -1,0 +1,18 @@
+[
+    {
+        "question": "AWS Organizations의 주요 기능은?",
+        "options": ["비용 관리", "계정 통합 관리", "보안 강화", "성능 최적화"],
+        "correct": 1,
+        "explanation": "AWS Organizations는 여러 AWS 계정을 중앙에서 관리할 수 있게 해줍니다.",
+        "difficulty": 4,
+        "certInfo": "AWS Certified Solutions Architect Professional (SAP-C01)는 복잡한 엔터프라이즈 아키텍처 설계 및 구현 능력을 검증하는 고급 자격증입니다."
+    },
+    {
+        "question": "AWS Control Tower의 목적은?",
+        "options": ["멀티 계정 환경 설정", "비용 최적화", "보안 감사", "성능 모니터링"],
+        "correct": 0,
+        "explanation": "Control Tower는 안전하고 규정을 준수하는 멀티 계정 환경을 설정합니다.",
+        "difficulty": 4,
+        "certInfo": "AWS Control Tower는 멀티 계정 AWS 환경을 설정하고 관리하는 서비스입니다."
+    }
+]

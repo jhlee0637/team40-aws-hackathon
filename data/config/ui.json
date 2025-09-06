@@ -1,0 +1,55 @@
+{
+    "colors": {
+        "primary": "#FF9900",
+        "secondary": "#1565C0",
+        "success": "#4CAF50",
+        "danger": "#F44336",
+        "warning": "#FFD700",
+        "info": "#2196F3",
+        "dark": "#424242",
+        "light": "#FFFFFF"
+    },
+    "fonts": {
+        "primary": "monospace",
+        "sizes": {
+            "small": "10px",
+            "medium": "12px",
+            "large": "16px",
+            "xlarge": "20px"
+        }
+    },
+    "layout": {
+        "topBar": {
+            "height": 50,
+            "background": "rgba(0, 0, 0, 0.7)"
+        },
+        "bottomBar": {
+            "height": 30,
+            "background": "rgba(0, 0, 0, 0.5)"
+        },
+        "battleUI": {
+            "questionPanel": {
+                "x": 50,
+                "y": -220,
+                "width": -100,
+                "height": 170,
+                "background": "rgba(0, 0, 0, 0.8)"
+            }
+        }
+    },
+    "animations": {
+        "fadeIn": {
+            "duration": 300,
+            "easing": "ease-in"
+        },
+        "slideUp": {
+            "duration": 500,
+            "easing": "ease-out"
+        }
+    },
+    "controls": {
+        "movement": ["WASD", "Arrow Keys"],
+        "interact": ["Space"],
+        "battle": ["1-4 Keys", "Mouse Click"]
+    }
+}

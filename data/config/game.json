@@ -1,0 +1,48 @@
+{
+    "title": "AWS 노들섬 퀴즈 배틀 RPG",
+    "version": "1.0.0",
+    "canvas": {
+        "width": 800,
+        "height": 600
+    },
+    "player": {
+        "startX": 400,
+        "startY": 600,
+        "speed": 2,
+        "startHp": 100,
+        "startLevel": 1,
+        "startCredits": 1000
+    },
+    "camera": {
+        "smoothing": 0.08,
+        "bounds": true
+    },
+    "battle": {
+        "damageMultiplier": {
+            "correct": 25,
+            "wrong": 15
+        },
+        "expGain": {
+            "base": 50,
+            "perLevel": 10
+        },
+        "creditsGain": {
+            "base": 100,
+            "perLevel": 25
+        }
+    },
+    "sprites": {
+        "path": "assets/sprites/",
+        "files": ["buildings.svg", "player.svg", "monsters.svg", "npc.svg"]
+    },
+    "audio": {
+        "enabled": true,
+        "volume": 0.7,
+        "bgm": "assets/audio/bgm.mp3",
+        "sfx": {
+            "battle": "assets/audio/battle.mp3",
+            "victory": "assets/audio/victory.mp3",
+            "defeat": "assets/audio/defeat.mp3"
+        }
+    }
+}

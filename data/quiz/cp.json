@@ -1,0 +1,26 @@
+[
+    {
+        "question": "AWS 클라우드의 6가지 장점 중 하나가 아닌 것은?",
+        "options": ["민첩성 향상", "비용 절감", "데이터 소유권 보장", "글로벌 확장"],
+        "correct": 2,
+        "explanation": "AWS는 데이터 소유권을 보장하지 않습니다. 고객이 데이터를 소유합니다.",
+        "difficulty": 1,
+        "certInfo": "AWS Certified Cloud Practitioner (CLF-C01)는 AWS 클라우드의 기본 개념과 서비스를 이해하는 입문 자격증입니다."
+    },
+    {
+        "question": "S3 버킷 이름의 특징은?",
+        "options": ["리전별로 고유", "계정별로 고유", "전 세계적으로 고유", "AZ별로 고유"],
+        "correct": 2,
+        "explanation": "S3 버킷 이름은 전 세계적으로 고유해야 합니다.",
+        "difficulty": 1,
+        "certInfo": "S3는 AWS의 핵심 스토리지 서비스로, 99.999999999%(11 9's)의 내구성을 제공합니다."
+    },
+    {
+        "question": "EC2 인스턴스의 기본 모니터링 간격은?",
+        "options": ["1분", "5분", "10분", "15분"],
+        "correct": 1,
+        "explanation": "EC2 기본 모니터링은 5분 간격으로 수행됩니다.",
+        "difficulty": 1,
+        "certInfo": "EC2는 AWS의 가상 서버 서비스로, 다양한 인스턴스 타입과 운영체제를 지원합니다."
+    }
+]

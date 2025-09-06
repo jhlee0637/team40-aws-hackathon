@@ -1,0 +1,32 @@
+[
+    {
+        "x": 10, "y": 20, "name": "S3 버킷몬", "type": "s3",
+        "hp": 60, "maxHp": 60, "level": 3, "cert": "cp", "zone": "beginner",
+        "defeated": false, "moveTimer": 0, "movePattern": "random"
+    },
+    {
+        "x": 18, "y": 25, "name": "EC2 컴퓨터", "type": "ec2",
+        "hp": 70, "maxHp": 70, "level": 4, "cert": "cp", "zone": "beginner",
+        "defeated": false, "moveTimer": 0, "movePattern": "patrol"
+    },
+    {
+        "x": 12, "y": 40, "name": "람다 함수", "type": "lambda",
+        "hp": 50, "maxHp": 50, "level": 2, "cert": "cp", "zone": "beginner",
+        "defeated": false, "moveTimer": 0, "movePattern": "teleport"
+    },
+    {
+        "x": 30, "y": 20, "name": "VPC 네트워크", "type": "vpc",
+        "hp": 100, "maxHp": 100, "level": 6, "cert": "saa", "zone": "forest",
+        "defeated": false, "moveTimer": 0, "movePattern": "guard"
+    },
+    {
+        "x": 45, "y": 35, "name": "ELB 로드밸런서", "type": "elb",
+        "hp": 90, "maxHp": 90, "level": 5, "cert": "saa", "zone": "forest",
+        "defeated": false, "moveTimer": 0, "movePattern": "defensive"
+    },
+    {
+        "x": 55, "y": 25, "name": "EKS 쿠버네티스", "type": "eks",
+        "hp": 150, "maxHp": 150, "level": 10, "cert": "dva", "zone": "mountain",
+        "defeated": false, "moveTimer": 0, "movePattern": "swarm"
+    }
+]

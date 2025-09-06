@@ -1,0 +1,26 @@
+{
+    "tiles": {
+        "1": {"name": "잔디", "collision": false, "sprite": {"x": 20, "y": 48, "w": 16, "h": 16}},
+        "2": {"name": "물", "collision": true, "animated": true},
+        "3": {"name": "나무", "collision": true, "sprite": {"x": 0, "y": 48, "w": 16, "h": 16}},
+        "7": {"name": "길", "collision": false, "sprite": {"x": 40, "y": 48, "w": 16, "h": 16}},
+        "8": {"name": "AWS 센터", "collision": true, "sprite": {"x": 80, "y": 0, "w": 28, "h": 40}},
+        "9": {"name": "집", "collision": true, "sprite": {"x": 40, "y": 0, "w": 24, "h": 40}},
+        "10": {"name": "음악당", "collision": true, "sprite": {"x": 0, "y": 0, "w": 32, "h": 40}},
+        "11": {"name": "CP 체육관", "collision": true, "color": "#2E7D32"},
+        "12": {"name": "SAA 체육관", "collision": true, "color": "#1565C0"},
+        "13": {"name": "DVA 체육관", "collision": true, "color": "#E65100"},
+        "14": {"name": "SAP 체육관", "collision": true, "color": "#4A148C"},
+        "15": {"name": "숲", "collision": false, "color": "#2E7D32"},
+        "16": {"name": "산", "collision": false, "color": "#5D4037"},
+        "17": {"name": "큰 나무", "collision": true, "color": "#228B22"},
+        "18": {"name": "바위", "collision": true, "color": "#696969"}
+    },
+    "animations": {
+        "water": {
+            "frames": 4,
+            "speed": 0.1,
+            "colors": ["#4682B4", "#5F9EA0", "#6495ED", "#87CEEB"]
+        }
+    }
+}

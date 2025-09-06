@@ -1,0 +1,27 @@
+[
+    {
+        "x": 20, "y": 30,
+        "name": "AWS 가이드",
+        "type": "guide",
+        "dialogue": [
+            "안녕하세요! AWS 노들섬에 오신 것을 환영합니다!",
+            "이곳에서 AWS 자격증을 위한 퀴즈 배틀을 즐기실 수 있어요.",
+            "체육관 관장들과 배틀하여 자격증 배지를 획득해보세요!"
+        ],
+        "sprite": "guide_npc"
+    },
+    {
+        "x": 35, "y": 40,
+        "name": "상점 주인",
+        "type": "shop",
+        "dialogue": [
+            "어서오세요! AWS 크레딧으로 아이템을 구매하실 수 있어요.",
+            "체력 회복 포션이나 경험치 부스터는 어떠세요?"
+        ],
+        "sprite": "shop_npc",
+        "items": [
+            {"name": "체력 포션", "price": 50, "effect": "hp_restore"},
+            {"name": "경험치 부스터", "price": 100, "effect": "exp_boost"}
+        ]
+    }
+]

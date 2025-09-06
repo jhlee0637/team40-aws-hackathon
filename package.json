@@ -1,0 +1,32 @@
+{
+  "name": "aws-nodeul-quest",
+  "version": "1.0.0",
+  "description": "AWS 노들섬 퀴즈 배틀 RPG - 포켓몬 스타일 학습 게임",
+  "main": "index.html",
+  "scripts": {
+    "bundle": "node scripts/bundle-data.js",
+    "dev": "npm run bundle && python -m http.server 8000",
+    "start": "npm run bundle && npx http-server -p 8000",
+    "build": "npm run bundle",
+    "watch": "nodemon --watch data --ext json --exec \"npm run bundle\"",
+    "clean": "rm -rf src/data/bundled-data.js src/data/data-dev.js"
+  },
+  "keywords": [
+    "aws",
+    "game",
+    "rpg",
+    "quiz",
+    "education",
+    "pokemon",
+    "pixel-art"
+  ],
+  "author": "AWS Hackathon Team 40",
+  "license": "MIT",
+  "devDependencies": {
+    "nodemon": "^3.0.1",
+    "http-server": "^14.1.1"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}

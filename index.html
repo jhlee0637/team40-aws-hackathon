@@ -3,131 +3,59 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AWS Cert Quest - 픽셀 RPG</title>
-    <link rel="stylesheet" href="css/style.css">
+    <title>AWS 노들섬 퀴즈 배틀 RPG</title>
     <style>
         body {
             margin: 0;
             padding: 0;
-            background: #1a1a2e;
-            color: white;
-            font-family: 'Courier New', monospace;
+            background: #000;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-        }
-        
-        #gameContainer {
-            text-align: center;
-            background: #16213e;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+            font-family: monospace;
         }
         
         #gameCanvas {
-            border: 2px solid #00ffff;
-            background: #0f3460;
+            border: 2px solid #FF9900;
+            background: #87CEEB;
             image-rendering: pixelated;
             image-rendering: -moz-crisp-edges;
             image-rendering: crisp-edges;
         }
         
-        #ui {
-            margin-top: 20px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        .game-info {
+            position: absolute;
+            top: 10px;
+            left: 10px;
+            color: white;
+            font-size: 14px;
         }
         
-        #score, #level, #ui > div {
-            background: #533483;
-            padding: 10px;
-            border-radius: 5px;
-            margin: 0 10px;
-        }
-        
-        #stickerCollection {
-            margin-top: 20px;
-            padding: 15px;
-            background: #0f3460;
-            border-radius: 5px;
-        }
-        
-        .sticker {
-            display: inline-block;
-            width: 40px;
-            height: 40px;
-            margin: 5px;
-            background: #533483;
-            border-radius: 5px;
-            text-align: center;
-            line-height: 40px;
-            font-size: 12px;
-        }
-        
-        .sticker.collected {
-            background: #00ffff;
-            color: #1a1a2e;
+        .loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: white;
+            font-size: 18px;
         }
     </style>
 </head>
 <body>
-    <div id="gameContainer">
-        <h1>🌾 AWS 노들노들 이야기</h1>
-        <canvas id="gameCanvas" width="960" height="720"></canvas>
-        
-        <div id="ui" style="display: none;">
-            <div id="score">점수: <span id="scoreValue">0</span></div>
-            <div id="level">레벨: <span id="levelValue">1</span></div>
-            <div>❤️ HP: <span id="lives">3</span></div>
-            <div>⭐ EXP: <span id="exp">0</span>/<span id="expNext">100</span></div>
-            <div style="background: #333; width: 200px; height: 10px; margin: 5px;">
-                <div id="expBar" style="background: #00ff00; height: 100%; width: 0%; transition: width 0.3s;"></div>
-            </div>
-        </div>
-        
-        <div id="stickerCollection">
-            <h3>🏆 AWS 자격증 배지 컬렉션</h3>
-            <div id="stickers">
-                <div class="sticker" id="cp">CP</div>
-                <div class="sticker" id="saa">SAA</div>
-                <div class="sticker" id="dva">DVA</div>
-                <div class="sticker" id="soa">SOA</div>
-                <div class="sticker" id="sap">SAP</div>
-                <div class="sticker" id="dop">DOP</div>
-            </div>
-        </div>
-        
-        <div id="quiz" style="display: none; margin-top: 20px; padding: 20px; background: #533483; border-radius: 5px;">
-            <h3 id="quizQuestion"></h3>
-            <div id="quizOptions"></div>
-        </div>
+    <canvas id="gameCanvas" width="800" height="600"></canvas>
+    <div class="game-info">
+        <h3>🎮 AWS 노들섬 퀴즈 배틀 RPG</h3>
+        <p>WASD: 이동 | Space: 상호작용 | 1-4: 퀴즈 답변</p>
     </div>
+    <div id="loading" class="loading">게임 로딩 중...</div>
     
-    <script>
-        // 퀴즈 데이터
-        const QUIZ_DATABASE = {
-            cp: [{
-                question: "AWS의 핵심 가치 제안은 무엇인가요?",
-                options: ["비용 절감만", "확장성만", "보안만", "비용 절감, 확장성, 보안 모두"],
-                correct: 3,
-                explanation: "AWS는 비용 절감, 확장성, 보안을 모두 제공합니다."
-            }],
-            saa: [{
-                question: "고가용성을 위해 EC2 인스턴스를 배치할 때 권장사항은?",
-                options: ["단일 AZ에 배치", "여러 AZ에 배치", "단일 리전에만 배치", "온프레미스와 혼합"],
-                correct: 1,
-                explanation: "고가용성을 위해서는 여러 가용 영역(AZ)에 인스턴스를 분산 배치해야 합니다."
-            }]
-        };
+    <script type="module">
+        import { Game } from './src/classes/Game.js';
         
-        function getRandomQuiz(certType) {
-            const quizzes = QUIZ_DATABASE[certType];
-            return quizzes ? quizzes[Math.floor(Math.random() * quizzes.length)] : null;
-        }
+        document.getElementById('loading').style.display = 'none';
+        console.log('게임 시작!');
+        new Game();
     </script>
-    <script src="src/stardew-fixed.js"></script>
 </body>
 </html>
